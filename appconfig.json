@@ -1,0 +1,7 @@
+{
+    "appName": "RuneHub Rotation Helper",
+    "startfile": "index.html",
+    "configid": "runehub-rotation-helper",
+    "description": "Boss rotation helper — shows your ability rotation for the current boss.",
+"permissions": ["pixel", "overlay", "gamestate"]
+}

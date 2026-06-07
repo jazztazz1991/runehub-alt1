@@ -1,0 +1,35 @@
+/*! . */
+
+/*! ../fonts/chatbox/12pt.fontmeta.json */
+
+/*! ./alt1api */
+
+/*! ./declarations */
+
+/*! ./imagedata-extensions */
+
+/*! ./imagedetect */
+
+/*! ./imgref */
+
+/*! ./imgs/detectimg.data.png */
+
+/*! ./index */
+
+/*! ./nodepolyfill */
+
+/*! ./pasteinput */
+
+/*! ./rect */
+
+/*! ./wrapper */
+
+/*! alt1/base */
+
+/*! alt1/ocr */
+
+/*! canvas */
+
+/*! electron/common */
+
+/*! sharp */
