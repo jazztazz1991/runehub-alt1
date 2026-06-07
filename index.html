@@ -10,13 +10,31 @@
     <div id="app">
         <div id="header">
             <span id="boss-name">No boss detected</span>
-            <span id="phase-label"></span>
+            <button id="reset-btn" title="Reset to step 1">⟳</button>
         </div>
+
+        <div id="overlay-main" class="idle">
+            <div id="current-card" class="ability-card">
+                <div class="card-label">NOW</div>
+                <div class="card-name" id="current-name">---</div>
+                <div class="card-note" id="current-note"></div>
+            </div>
+            <div id="arrow">→</div>
+            <div id="next-card" class="ability-card next">
+                <div class="card-label">NEXT</div>
+                <div class="card-name" id="next-name">---</div>
+            </div>
+        </div>
+
+        <div id="controls">
+            <div id="progress-bar">
+                <div id="progress-fill"></div>
+            </div>
+            <button id="start-btn">▶ Start</button>
+            <span id="step-counter"></span>
+        </div>
+
         <div id="setup-note"></div>
-        <div id="rotation-display">
-            <div class="no-boss">Stand near a boss to load its rotation.</div>
-        </div>
-        <div id="status"></div>
     </div>
     <script src="dist/index.js"></script>
 </body>

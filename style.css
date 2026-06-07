@@ -1,105 +1,177 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
     background: rgba(0, 0, 0, 0.88);
     color: #e0e0e0;
     font-family: 'Segoe UI', sans-serif;
     font-size: 13px;
-    min-width: 260px;
     user-select: none;
+    width: 300px;
 }
 
-#app {
-    padding: 8px 10px;
-}
+#app { padding: 8px; display: flex; flex-direction: column; gap: 6px; }
 
+/* Header */
 #header {
     display: flex;
-    align-items: baseline;
-    gap: 8px;
-    margin-bottom: 8px;
-    border-bottom: 1px solid #333;
-    padding-bottom: 6px;
+    align-items: center;
+    justify-content: space-between;
 }
 
 #boss-name {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: #f0c060;
     flex: 1;
-}
-
-#phase-label {
-    font-size: 11px;
-    color: #aaa;
-    background: #2a2a2a;
-    border-radius: 10px;
-    padding: 2px 8px;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-#setup-note {
-    font-size: 11px;
-    color: #aaa;
-    background: rgba(255, 255, 255, 0.05);
-    border-left: 2px solid #f0c060;
-    padding: 4px 8px;
-    margin-bottom: 8px;
-    border-radius: 0 4px 4px 0;
-    line-height: 1.4;
+#reset-btn {
+    background: transparent;
+    border: 1px solid #444;
+    color: #888;
+    border-radius: 4px;
+    padding: 2px 6px;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+#reset-btn:hover { border-color: #f0c060; color: #f0c060; }
+
+/* Main overlay — current + next */
+#overlay-main {
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
 }
 
-#setup-note:empty {
-    display: none;
-}
-
-#rotation-display {
+.ability-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 8px 10px;
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 2px;
+    transition: border-color 0.2s;
 }
 
-.ability-row {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    padding: 4px 6px;
-    border-radius: 4px;
-    border-left: 2px solid #444;
+#current-card {
+    flex: 1;
+    border-color: #f0c060;
+    background: rgba(240, 192, 96, 0.08);
 }
 
-.ability-row:first-child {
-    border-left-color: #f0c060;
-    background: rgba(240, 192, 96, 0.07);
+#next-card {
+    width: 90px;
+    flex-shrink: 0;
+    opacity: 0.7;
 }
 
-.ability-name {
-    font-weight: 600;
-    color: #e8e8e8;
-    white-space: nowrap;
-    min-width: 110px;
+.card-label {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #888;
+    text-transform: uppercase;
 }
 
-.ability-note {
-    font-size: 11px;
+#current-card .card-label { color: #f0c060; }
+
+.card-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #f0f0f0;
+    line-height: 1.2;
+}
+
+#next-card .card-name { font-size: 12px; color: #ccc; }
+
+.card-note {
+    font-size: 10px;
     color: #888;
     line-height: 1.3;
+    margin-top: 2px;
 }
 
-#status {
-    margin-top: 6px;
+#arrow {
+    color: #555;
+    font-size: 18px;
+    align-self: center;
+    flex-shrink: 0;
+}
+
+/* Controls */
+#controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#progress-bar {
+    flex: 1;
+    height: 4px;
+    background: #333;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+#progress-fill {
+    height: 100%;
+    width: 100%;
+    background: #f0c060;
+    border-radius: 2px;
+    transform-origin: left;
+    transform: scaleX(1);
+}
+
+#progress-fill.animating {
+    animation: gcd-drain linear forwards;
+}
+
+@keyframes gcd-drain {
+    from { transform: scaleX(1); }
+    to   { transform: scaleX(0); }
+}
+
+#start-btn {
+    background: transparent;
+    border: 1px solid #555;
+    color: #ccc;
+    border-radius: 4px;
+    padding: 3px 10px;
+    cursor: pointer;
     font-size: 11px;
-    color: #666;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+#start-btn:hover { border-color: #f0c060; color: #f0c060; }
+#start-btn.running { border-color: #f0c060; color: #f0c060; }
+
+#step-counter {
+    font-size: 10px;
+    color: #555;
+    flex-shrink: 0;
+    min-width: 28px;
     text-align: right;
 }
 
-.no-boss {
-    color: #555;
-    font-style: italic;
-    font-size: 12px;
-    padding: 4px 2px;
+/* Setup note */
+#setup-note {
+    font-size: 10px;
+    color: #888;
+    border-left: 2px solid #f0c060;
+    padding: 3px 6px;
+    line-height: 1.4;
+    background: rgba(240,192,96,0.05);
+    border-radius: 0 4px 4px 0;
 }
+#setup-note:empty { display: none; }
+
+/* Idle / no boss state */
+#overlay-main.idle .ability-card { border-color: #2a2a2a; background: transparent; }
+#overlay-main.idle #current-card .card-label { color: #555; }
+#overlay-main.idle #arrow { color: #333; }

@@ -6,64 +6,133 @@ if (a1lib.hasAlt1) {
     alt1.identifyAppUrl('https://jazztazz1991.github.io/runehub-alt1/appconfig.json');
 }
 
-const reader = new TargetMobReader();
-const POLL_MS = 750;
+const reader       = new TargetMobReader();
+const POLL_MS      = 800;
+const GCD_MS       = 2400;
 
-const bossNameEl  = document.getElementById('boss-name')!;
-const phaseEl     = document.getElementById('phase-label')!;
-const setupNoteEl = document.getElementById('setup-note')!;
-const rotationEl  = document.getElementById('rotation-display')!;
-const statusEl    = document.getElementById('status')!;
+// DOM
+const bossNameEl   = document.getElementById('boss-name')!;
+const setupNoteEl  = document.getElementById('setup-note')!;
+const overlayEl    = document.getElementById('overlay-main')!;
+const currentName  = document.getElementById('current-name')!;
+const currentNote  = document.getElementById('current-note')!;
+const nextName     = document.getElementById('next-name')!;
+const startBtn     = document.getElementById('start-btn') as HTMLButtonElement;
+const resetBtn     = document.getElementById('reset-btn') as HTMLButtonElement;
+const progressFill = document.getElementById('progress-fill')!;
+const stepCounter  = document.getElementById('step-counter')!;
 
+// State
+let currentBossKey: string | null = null;
+let currentPhase: BossPhase | null = null;
+let rotationIndex = 0;
+let isRunning = false;
+let gcdTimer: ReturnType<typeof setInterval> | null = null;
 let lastTargetName = '';
+
+// ── Timer ────────────────────────────────────────────────────────────────────
+
+function startGcd(): void {
+    if (isRunning || !currentPhase) return;
+    isRunning = true;
+    startBtn.textContent = '⏸ Running';
+    startBtn.classList.add('running');
+    kickProgressBar();
+    gcdTimer = setInterval(() => {
+        advance();
+        kickProgressBar();
+    }, GCD_MS);
+}
+
+function pauseGcd(): void {
+    if (gcdTimer) { clearInterval(gcdTimer); gcdTimer = null; }
+    isRunning = false;
+    startBtn.textContent = '▶ Start';
+    startBtn.classList.remove('running');
+    stopProgressBar();
+}
+
+function advance(): void {
+    if (!currentPhase) return;
+    rotationIndex = (rotationIndex + 1) % currentPhase.rotation.length;
+    renderAbilities();
+}
+
+function resetRotation(): void {
+    pauseGcd();
+    rotationIndex = 0;
+    renderAbilities();
+}
+
+// ── Progress bar ─────────────────────────────────────────────────────────────
+
+function kickProgressBar(): void {
+    // Force reflow to restart CSS animation
+    progressFill.classList.remove('animating');
+    progressFill.style.animationDuration = '';
+    void progressFill.offsetWidth; // trigger reflow
+    progressFill.style.animationDuration = `${GCD_MS}ms`;
+    progressFill.classList.add('animating');
+}
+
+function stopProgressBar(): void {
+    progressFill.classList.remove('animating');
+    progressFill.style.transform = 'scaleX(1)';
+}
+
+// ── Render ───────────────────────────────────────────────────────────────────
+
+function renderAbilities(): void {
+    if (!currentPhase) return;
+    const rotation = currentPhase.rotation;
+    const cur = rotation[rotationIndex];
+    const nxt = rotation[(rotationIndex + 1) % rotation.length];
+    currentName.textContent = cur.name;
+    currentNote.textContent = cur.note ?? '';
+    nextName.textContent    = nxt.name;
+    stepCounter.textContent = `${rotationIndex + 1}/${rotation.length}`;
+}
+
+function setIdle(): void {
+    overlayEl.classList.add('idle');
+    bossNameEl.textContent  = 'No boss detected';
+    setupNoteEl.textContent = '';
+    currentName.textContent = '---';
+    currentNote.textContent = '';
+    nextName.textContent    = '---';
+    stepCounter.textContent = '';
+}
+
+function loadBoss(boss: BossRotation, phase: BossPhase): void {
+    overlayEl.classList.remove('idle');
+    bossNameEl.textContent  = boss.bossName;
+    setupNoteEl.textContent = boss.setupNote ?? '';
+    currentPhase = phase;
+    rotationIndex = 0;
+    renderAbilities();
+}
+
+// ── Boss detection ────────────────────────────────────────────────────────────
 
 function detectBossAndPhase(): { boss: BossRotation; phase: BossPhase } | null {
     if (!a1lib.hasAlt1) return null;
-
     let state;
-    try {
-        state = reader.read();
-    } catch {
-        return null;
-    }
+    try { state = reader.read(); } catch { return null; }
     if (!state?.name) return null;
 
     const lower = state.name.toLowerCase();
-
     for (const [fragment, bossKey] of BOSS_NAME_MAP) {
         if (lower.includes(fragment)) {
-            const boss = ROTATIONS[bossKey];
-            // Find the phase whose triggerTarget matches this target name.
+            const boss  = ROTATIONS[bossKey];
             const phase = boss.phases.find(p => p.triggerTarget && lower.includes(p.triggerTarget))
                        ?? boss.phases[0];
             return { boss, phase };
         }
     }
-
     return null;
 }
 
-function renderPhase(phase: BossPhase): void {
-    rotationEl.innerHTML = '';
-    phase.rotation.forEach((ability) => {
-        const row = document.createElement('div');
-        row.className = 'ability-row';
-
-        const nameEl = document.createElement('span');
-        nameEl.className = 'ability-name';
-        nameEl.textContent = ability.name;
-        row.appendChild(nameEl);
-
-        if (ability.note) {
-            const noteEl = document.createElement('span');
-            noteEl.className = 'ability-note';
-            noteEl.textContent = ability.note;
-            row.appendChild(noteEl);
-        }
-
-        rotationEl.appendChild(row);
-    });
-}
+// ── Poll ──────────────────────────────────────────────────────────────────────
 
 function poll(): void {
     const result = detectBossAndPhase();
@@ -71,32 +140,32 @@ function poll(): void {
     if (!result) {
         if (lastTargetName !== '') {
             lastTargetName = '';
-            bossNameEl.textContent = 'No boss detected';
-            phaseEl.textContent = '';
-            setupNoteEl.textContent = '';
-            rotationEl.innerHTML =
-                '<div class="no-boss">Stand near a boss to load its rotation.</div>';
-            statusEl.textContent = a1lib.hasAlt1 ? 'Scanning target...' : 'Open in Alt1 browser.';
+            pauseGcd();
+            setIdle();
         }
         return;
     }
 
     const { boss, phase } = result;
-    const state = reader.state!;
-    const targetName = state.name;
+    const targetName = reader.state!.name;
 
-    // Only re-render when target name changes (covers both boss and phase transitions).
     if (targetName !== lastTargetName) {
         lastTargetName = targetName;
-        bossNameEl.textContent = boss.bossName;
-        phaseEl.textContent = boss.phases.length > 1 ? phase.label : '';
-        setupNoteEl.textContent = boss.setupNote ?? '';
-        statusEl.textContent = state.hp ? `${state.hp.toLocaleString()} HP` : '';
-        renderPhase(phase);
-    } else if (state.hp) {
-        statusEl.textContent = `${state.hp.toLocaleString()} HP`;
+        pauseGcd();
+        loadBoss(boss, phase);
     }
 }
 
+// ── Buttons ───────────────────────────────────────────────────────────────────
+
+startBtn.addEventListener('click', () => {
+    if (isRunning) pauseGcd(); else startGcd();
+});
+
+resetBtn.addEventListener('click', resetRotation);
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+
+setIdle();
 setInterval(poll, POLL_MS);
 poll();
