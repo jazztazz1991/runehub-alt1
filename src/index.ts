@@ -8,12 +8,13 @@ if (a1lib.hasAlt1) {
 
 const reader       = new TargetMobReader();
 const POLL_MS      = 800;
-const GCD_MS       = 2400;
+const GCD_MS       = 1800;
 
 // DOM
 const bossNameEl   = document.getElementById('boss-name')!;
 const setupNoteEl  = document.getElementById('setup-note')!;
 const overlayEl    = document.getElementById('overlay-main')!;
+const prevName     = document.getElementById('prev-name')!;
 const currentName  = document.getElementById('current-name')!;
 const currentNote  = document.getElementById('current-note')!;
 const nextName     = document.getElementById('next-name')!;
@@ -29,6 +30,7 @@ let rotationIndex = 0;
 let isRunning = false;
 let gcdTimer: ReturnType<typeof setInterval> | null = null;
 let lastTargetName = '';
+let initialHp: number | null = null;
 
 // ── Timer ────────────────────────────────────────────────────────────────────
 
@@ -85,18 +87,22 @@ function stopProgressBar(): void {
 function renderAbilities(): void {
     if (!currentPhase) return;
     const rotation = currentPhase.rotation;
-    const cur = rotation[rotationIndex];
-    const nxt = rotation[(rotationIndex + 1) % rotation.length];
+    const len = rotation.length;
+    const prev = rotation[(rotationIndex - 1 + len) % len];
+    const cur  = rotation[rotationIndex];
+    const nxt  = rotation[(rotationIndex + 1) % len];
+    prevName.textContent    = prev.name;
     currentName.textContent = cur.name;
     currentNote.textContent = cur.note ?? '';
     nextName.textContent    = nxt.name;
-    stepCounter.textContent = `${rotationIndex + 1}/${rotation.length}`;
+    stepCounter.textContent = `${rotationIndex + 1}/${len}`;
 }
 
 function setIdle(): void {
     overlayEl.classList.add('idle');
     bossNameEl.textContent  = 'No boss detected';
     setupNoteEl.textContent = '';
+    prevName.textContent    = '---';
     currentName.textContent = '---';
     currentNote.textContent = '';
     nextName.textContent    = '---';
@@ -109,6 +115,7 @@ function loadBoss(boss: BossRotation, phase: BossPhase): void {
     setupNoteEl.textContent = boss.setupNote ?? '';
     currentPhase = phase;
     rotationIndex = 0;
+    initialHp    = null;
     renderAbilities();
 }
 
@@ -153,6 +160,18 @@ function poll(): void {
         lastTargetName = targetName;
         pauseGcd();
         loadBoss(boss, phase);
+    }
+
+    // Auto-start when boss HP first drops (first hit landed).
+    if (!isRunning && currentPhase) {
+        const hp = reader.state?.hp;
+        if (hp) {
+            if (initialHp === null) {
+                initialHp = hp;
+            } else if (hp < initialHp) {
+                startGcd();
+            }
+        }
     }
 }
 
