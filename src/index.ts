@@ -16,9 +16,8 @@ const POLL_MS = 200;
 const GCD_MS  = 1800;
 const OV_GROUP = 'rh-rotation';
 
-// Overlay box layout
-const BOX_W = 120;
-const BOX_H = 50;
+const BOX_W   = 120;
+const BOX_H   = 50;
 const BOX_GAP = 8;
 const TOTAL_W = BOX_W * 3 + BOX_GAP * 2;
 
@@ -28,19 +27,80 @@ const setupNoteEl  = document.getElementById('setup-note')!;
 const stepCounter  = document.getElementById('step-counter')!;
 const startBtn     = document.getElementById('start-btn') as HTMLButtonElement;
 const resetBtn     = document.getElementById('reset-btn') as HTMLButtonElement;
+const setposBtn    = document.getElementById('setpos-btn') as HTMLButtonElement;
 
-// State
-let manualBossKey: string | null = null;   // user-picked from dropdown
-let detectedBossKey: string | null = null; // OCR detected
-let currentPhase: BossPhase | null = null;
-let currentBoss: BossRotation | null = null;
+// ── Overlay position ──────────────────────────────────────────────────────────
+// Stored as RS3-window-relative offsets so it survives the game window moving.
+
+let ovRelX = 0;
+let ovRelY = 0;
+let hasCustomPosition = false;
+let isSelectingLocation = false;
+
+const storedRelX = localStorage.getItem('rh-ov-rx');
+const storedRelY = localStorage.getItem('rh-ov-ry');
+if (storedRelX !== null && storedRelY !== null) {
+    ovRelX = parseInt(storedRelX, 10);
+    ovRelY = parseInt(storedRelY, 10);
+    hasCustomPosition = true;
+}
+
+function getOverlayOrigin(): { x: number; y: number } {
+    if (isSelectingLocation && a1lib.hasAlt1) {
+        return {
+            x: alt1.mouseX - Math.floor(TOTAL_W / 2),
+            y: alt1.mouseY - Math.floor(BOX_H  / 2),
+        };
+    }
+    if (hasCustomPosition && a1lib.hasAlt1) {
+        return { x: alt1.rsX + ovRelX, y: alt1.rsY + ovRelY };
+    }
+    return {
+        x: alt1.rsX + Math.floor((alt1.rsWidth  - TOTAL_W) / 2),
+        y: alt1.rsY + alt1.rsHeight - BOX_H - 110,
+    };
+}
+
+function enterPositioningMode(): void {
+    isSelectingLocation = true;
+    setposBtn.textContent = '⊕ Setting... (Alt+1 to lock)';
+    setposBtn.classList.add('selecting');
+    drawOverlay();
+}
+
+function lockPosition(): void {
+    if (!a1lib.hasAlt1) return;
+    ovRelX = alt1.mouseX - alt1.rsX - Math.floor(TOTAL_W / 2);
+    ovRelY = alt1.mouseY - alt1.rsY - Math.floor(BOX_H  / 2);
+    hasCustomPosition = true;
+    localStorage.setItem('rh-ov-rx', String(ovRelX));
+    localStorage.setItem('rh-ov-ry', String(ovRelY));
+    isSelectingLocation = false;
+    setposBtn.textContent = '⊕ Set Overlay Position';
+    setposBtn.classList.remove('selecting');
+    drawOverlay();
+}
+
+// Alt1 calls window[activatorId]() when the registered hotkey fires
+(window as any).setposition = function () {
+    if (isSelectingLocation) lockPosition();
+};
+
+setposBtn.addEventListener('click', enterPositioningMode);
+
+// ── Rotation state ────────────────────────────────────────────────────────────
+
+let manualBossKey:   string | null = null;
+let detectedBossKey: string | null = null;
+let currentPhase:    BossPhase | null = null;
+let currentBoss:     BossRotation | null = null;
 let rotationIndex = 0;
-let isRunning = false;
+let isRunning     = false;
 let gcdTimer: ReturnType<typeof setInterval> | null = null;
 let lastTargetName = '';
 let initialHp: number | null = null;
 
-// ── Populate boss selector ───────────────────────────────────────────────────
+// ── Populate boss selector ────────────────────────────────────────────────────
 
 Object.entries(ROTATIONS).forEach(([key, boss]) => {
     const opt = document.createElement('option');
@@ -51,7 +111,6 @@ Object.entries(ROTATIONS).forEach(([key, boss]) => {
 
 bossSelectEl.addEventListener('change', () => {
     manualBossKey = bossSelectEl.value || null;
-    // Only apply manual selection if OCR hasn't found a boss
     if (!detectedBossKey) {
         if (manualBossKey) {
             loadBoss(ROTATIONS[manualBossKey], ROTATIONS[manualBossKey].phases[0]);
@@ -61,7 +120,7 @@ bossSelectEl.addEventListener('change', () => {
     }
 });
 
-// ── Timer ────────────────────────────────────────────────────────────────────
+// ── Timer ─────────────────────────────────────────────────────────────────────
 
 function startGcd(): void {
     if (isRunning || !currentPhase) return;
@@ -96,10 +155,10 @@ function resetRotation(): void {
 // ── Load / idle ───────────────────────────────────────────────────────────────
 
 function loadBoss(boss: BossRotation, phase: BossPhase): void {
-    currentBoss  = boss;
-    currentPhase = phase;
+    currentBoss   = boss;
+    currentPhase  = phase;
     rotationIndex = 0;
-    initialHp = null;
+    initialHp     = null;
     setupNoteEl.textContent = boss.setupNote ?? '';
     updatePanel();
     drawOverlay();
@@ -107,8 +166,8 @@ function loadBoss(boss: BossRotation, phase: BossPhase): void {
 
 function setIdle(): void {
     pauseGcd();
-    currentBoss  = null;
-    currentPhase = null;
+    currentBoss   = null;
+    currentPhase  = null;
     rotationIndex = 0;
     setupNoteEl.textContent = '';
     stepCounter.textContent = '';
@@ -143,50 +202,60 @@ function detectBossAndPhase(): { boss: BossRotation; phase: BossPhase; targetNam
 // ── Overlay drawing ───────────────────────────────────────────────────────────
 
 function drawOverlay(): void {
-    if (!a1lib.hasAlt1 || !currentPhase) { clearOverlay(); return; }
+    if (!a1lib.hasAlt1 || (!currentPhase && !isSelectingLocation)) {
+        clearOverlay();
+        return;
+    }
 
-    const rotation = currentPhase.rotation;
-    const len = rotation.length;
-    const prev = rotation[(rotationIndex - 1 + len) % len];
-    const cur  = rotation[rotationIndex];
-    const nxt  = rotation[(rotationIndex + 1) % len];
-
-    // Position: bottom-center of RS3 window, above action bar
-    const startX = alt1.rsX + Math.floor((alt1.rsWidth  - TOTAL_W) / 2);
-    const startY = alt1.rsY + alt1.rsHeight - BOX_H - 110;
-    const TIME = 600; // ms — refreshed every 200ms so never expires
+    const { x, y } = getOverlayOrigin();
+    const TIME = 600;
 
     alt1.overLaySetGroup(OV_GROUP);
     alt1.overLayClearGroup(OV_GROUP);
 
-    drawBox(startX,                   startY, prev.name, 'prev',    TIME);
-    drawBox(startX + BOX_W + BOX_GAP, startY, cur.name,  'current', TIME);
-    drawBox(startX + (BOX_W + BOX_GAP) * 2, startY, nxt.name, 'next', TIME);
+    // Resolve ability names (or placeholders when no rotation is loaded yet)
+    let prevName = 'Prev', curName = 'Now', nxtName = 'Next';
+    if (currentPhase) {
+        const r = currentPhase.rotation;
+        const l = r.length;
+        prevName = r[(rotationIndex - 1 + l) % l].name;
+        curName  = r[rotationIndex].name;
+        nxtName  = r[(rotationIndex + 1) % l].name;
+    }
+
+    drawBox(x,                       y, prevName, 'prev',    TIME);
+    drawBox(x + BOX_W + BOX_GAP,     y, curName,  'current', TIME);
+    drawBox(x + (BOX_W + BOX_GAP)*2, y, nxtName,  'next',    TIME);
+
+    if (isSelectingLocation) {
+        alt1.overLayTextEx(
+            'Press Alt+1 to save position',
+            mixColor(240, 192, 96, 255), 11,
+            x, y - 16, TIME, 'chatbox', true, false
+        );
+    }
 
     alt1.overLayRefreshGroup(OV_GROUP);
 }
 
 function drawBox(x: number, y: number, name: string, type: 'prev' | 'current' | 'next', time: number): void {
-    // Border
-    const borderW = type === 'current' ? 2 : 1;
+    const borderW     = type === 'current' ? 2 : 1;
     const borderColor = type === 'current'
         ? mixColor(240, 192, 96, 255)
         : mixColor(80, 80, 80, 180);
     alt1.overLayRect(borderColor, x, y, BOX_W, BOX_H, time, borderW);
 
-    // "NOW" label above current box
     if (type === 'current') {
         alt1.overLayTextEx('NOW', mixColor(240, 192, 96, 220), 9, x + 4, y + 4, time, 'chatbox', false, false);
     }
 
-    // Ability name
     const nameColor = type === 'prev'
         ? mixColor(110, 110, 110, 255)
         : type === 'next'
             ? mixColor(190, 190, 190, 255)
             : mixColor(255, 240, 160, 255);
-    const fontSize  = type === 'current' ? 14 : 12;
-    const textY     = type === 'current' ? y + 18 : y + 16;
+    const fontSize = type === 'current' ? 14 : 12;
+    const textY    = type === 'current' ? y + 18 : y + 16;
     alt1.overLayTextEx(name, nameColor, fontSize, x + 6, textY, time, 'chatbox', true, false);
 }
 
@@ -207,15 +276,13 @@ function poll(): void {
             detectedBossKey = null;
             lastTargetName  = '';
             pauseGcd();
-            // Fall back to manual selection if set, otherwise idle
             if (manualBossKey) {
                 loadBoss(ROTATIONS[manualBossKey], ROTATIONS[manualBossKey].phases[0]);
             } else {
                 setIdle();
             }
         }
-        // Keep redrawing overlay if manually selected boss is loaded
-        if (currentPhase) drawOverlay();
+        if (currentPhase || isSelectingLocation) drawOverlay();
         return;
     }
 
@@ -228,7 +295,6 @@ function poll(): void {
         loadBoss(boss, phase);
     }
 
-    // Auto-start on first HP drop
     if (!isRunning && currentPhase) {
         const hp = reader.state?.hp;
         if (hp) {

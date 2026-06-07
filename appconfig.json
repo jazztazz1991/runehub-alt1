@@ -8,5 +8,8 @@
     "defaultHeight": 140,
     "minWidth": 260,
     "minHeight": 80,
-    "permissions": "pixel, overlay, gamestate"
+    "permissions": "pixel, overlay, gamestate",
+    "activators": [
+        { "key": "alt+1", "id": "setposition" }
+    ]
 }

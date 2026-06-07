@@ -63,6 +63,30 @@ html, body {
 }
 #boss-select option { background: #1a1a1a; color: #e0e0e0; }
 
+/* Set overlay position button */
+#setpos-btn {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid #444;
+    color: #777;
+    border-radius: 3px;
+    padding: 5px 8px;
+    cursor: pointer;
+    font-size: 11px;
+    text-align: center;
+}
+#setpos-btn:hover { border-color: #f0c060; color: #f0c060; }
+#setpos-btn.selecting {
+    border-color: #f0c060;
+    color: #f0c060;
+    background: rgba(240,192,96,0.08);
+    animation: pulse-border 0.8s ease-in-out infinite;
+}
+@keyframes pulse-border {
+    0%, 100% { border-color: #f0c060; }
+    50%       { border-color: rgba(240,192,96,0.3); }
+}
+
 /* Setup note */
 #setup-note {
     font-size: 10px;
