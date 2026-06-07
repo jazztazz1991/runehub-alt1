@@ -15,5 +15,4 @@ declare namespace alt1 {
     function overLayRefreshGroup(group: string): void;
     function overLayFreezeGroup(group: string): void;
     function overLayContinueGroup(group: string): void;
-    function mixColor(r: number, g: number, b: number, a: number): number;
 }

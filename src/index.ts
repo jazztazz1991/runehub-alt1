@@ -6,6 +6,11 @@ if (a1lib.hasAlt1) {
     alt1.identifyAppUrl('https://jazztazz1991.github.io/runehub-alt1/appconfig.json');
 }
 
+// alt1.mixColor doesn't exist in 1.6.0 — build ARGB integer directly
+function mixColor(r: number, g: number, b: number, a: number = 255): number {
+    return (((a & 0xff) << 24) | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff)) >>> 0;
+}
+
 const reader  = new TargetMobReader();
 const POLL_MS = 200;
 const GCD_MS  = 1800;
@@ -165,21 +170,21 @@ function drawBox(x: number, y: number, name: string, type: 'prev' | 'current' | 
     // Border
     const borderW = type === 'current' ? 2 : 1;
     const borderColor = type === 'current'
-        ? alt1.mixColor(240, 192, 96, 255)
-        : alt1.mixColor(80, 80, 80, 180);
+        ? mixColor(240, 192, 96, 255)
+        : mixColor(80, 80, 80, 180);
     alt1.overLayRect(borderColor, x, y, BOX_W, BOX_H, time, borderW);
 
     // "NOW" label above current box
     if (type === 'current') {
-        alt1.overLayTextEx('NOW', alt1.mixColor(240, 192, 96, 220), 9, x + 4, y + 4, time, 'chatbox', false, false);
+        alt1.overLayTextEx('NOW', mixColor(240, 192, 96, 220), 9, x + 4, y + 4, time, 'chatbox', false, false);
     }
 
     // Ability name
     const nameColor = type === 'prev'
-        ? alt1.mixColor(110, 110, 110, 255)
+        ? mixColor(110, 110, 110, 255)
         : type === 'next'
-            ? alt1.mixColor(190, 190, 190, 255)
-            : alt1.mixColor(255, 240, 160, 255);
+            ? mixColor(190, 190, 190, 255)
+            : mixColor(255, 240, 160, 255);
     const fontSize  = type === 'current' ? 14 : 12;
     const textY     = type === 'current' ? y + 18 : y + 16;
     alt1.overLayTextEx(name, nameColor, fontSize, x + 6, textY, time, 'chatbox', true, false);
