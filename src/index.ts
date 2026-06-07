@@ -7,7 +7,7 @@ if (a1lib.hasAlt1) {
 }
 
 const reader       = new TargetMobReader();
-const POLL_MS      = 800;
+const POLL_MS      = 200;
 const GCD_MS       = 1800;
 
 // DOM
