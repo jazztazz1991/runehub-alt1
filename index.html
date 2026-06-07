@@ -7,39 +7,27 @@
     <link rel="manifest" href="appconfig.json" id="alt1-appconfig" />
 </head>
 <body>
-    <div id="app">
-        <div id="header">
-            <span id="boss-name">No boss detected</span>
-            <button id="reset-btn" title="Reset to step 1">⟳</button>
-        </div>
-
-        <div id="overlay-main" class="idle">
-            <div id="prev-card" class="ability-card prev">
-                <div class="card-label">PREV</div>
-                <div class="card-name" id="prev-name">---</div>
-            </div>
-            <div class="arrow">→</div>
-            <div id="current-card" class="ability-card">
-                <div class="card-label">NOW</div>
-                <div class="card-name" id="current-name">---</div>
-                <div class="card-note" id="current-note"></div>
-            </div>
-            <div class="arrow">→</div>
-            <div id="next-card" class="ability-card next">
-                <div class="card-label">NEXT</div>
-                <div class="card-name" id="next-name">---</div>
+    <div id="panel">
+        <div id="panel-header">
+            <span id="boss-label">RuneHub Rotation</span>
+            <div id="header-controls">
+                <span id="step-counter"></span>
+                <button id="reset-btn" title="Reset to step 1">⟳</button>
             </div>
         </div>
 
-        <div id="controls">
-            <div id="progress-bar">
-                <div id="progress-fill"></div>
-            </div>
-            <button id="start-btn" title="Auto-starts on first hit">▶ Manual</button>
-            <span id="step-counter"></span>
+        <div id="boss-row">
+            <select id="boss-select">
+                <option value="">Auto-detect boss</option>
+            </select>
         </div>
 
         <div id="setup-note"></div>
+
+        <div id="status-row">
+            <span id="status-text">Target a boss or select one above</span>
+            <button id="start-btn">▶</button>
+        </div>
     </div>
     <script src="dist/index.js"></script>
 </body>

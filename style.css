@@ -1,184 +1,108 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body {
-    background: rgba(0, 0, 0, 0.88);
-    color: #e0e0e0;
+html, body {
+    background: transparent;
     font-family: 'Segoe UI', sans-serif;
-    font-size: 13px;
+    font-size: 12px;
+    color: #e0e0e0;
     user-select: none;
-    width: 300px;
+    width: 280px;
 }
 
-#app { padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+#panel {
+    background: rgba(0, 0, 0, 0.82);
+    border: 1px solid #333;
+    border-radius: 6px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
 
-/* Header */
-#header {
+#panel-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-#boss-name {
-    font-size: 13px;
+#boss-label {
+    font-size: 12px;
     font-weight: 600;
     color: #f0c060;
-    flex: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+}
+
+#header-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#step-counter {
+    font-size: 10px;
+    color: #666;
 }
 
 #reset-btn {
     background: transparent;
     border: 1px solid #444;
     color: #888;
-    border-radius: 4px;
-    padding: 2px 6px;
+    border-radius: 3px;
+    padding: 1px 5px;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1;
-    flex-shrink: 0;
 }
 #reset-btn:hover { border-color: #f0c060; color: #f0c060; }
 
-/* Main overlay — current + next */
-#overlay-main {
+#boss-row select {
+    width: 100%;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid #444;
+    color: #e0e0e0;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+#boss-row select option {
+    background: #1a1a1a;
+    color: #e0e0e0;
+}
+
+#setup-note {
+    font-size: 10px;
+    color: #999;
+    border-left: 2px solid #f0c060;
+    padding: 3px 6px;
+    background: rgba(240,192,96,0.05);
+    border-radius: 0 3px 3px 0;
+    line-height: 1.4;
+}
+#setup-note:empty { display: none; }
+
+#status-row {
     display: flex;
-    align-items: stretch;
+    align-items: center;
+    justify-content: space-between;
     gap: 6px;
 }
 
-.ability-card {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid #333;
-    border-radius: 6px;
-    padding: 8px 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    transition: border-color 0.2s;
-}
-
-#current-card {
-    flex: 1;
-    border-color: #f0c060;
-    background: rgba(240, 192, 96, 0.08);
-}
-
-#prev-card {
-    width: 80px;
-    flex-shrink: 0;
-    opacity: 0.4;
-}
-
-#next-card {
-    width: 80px;
-    flex-shrink: 0;
-    opacity: 0.7;
-}
-
-.card-label {
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    color: #888;
-    text-transform: uppercase;
-}
-
-#current-card .card-label { color: #f0c060; }
-
-.card-name {
-    font-size: 15px;
-    font-weight: 700;
-    color: #f0f0f0;
-    line-height: 1.2;
-}
-
-#prev-card .card-name { font-size: 12px; color: #aaa; }
-#next-card .card-name { font-size: 12px; color: #ccc; }
-
-.card-note {
+#status-text {
     font-size: 10px;
-    color: #888;
-    line-height: 1.3;
-    margin-top: 2px;
-}
-
-.arrow {
-    color: #555;
-    font-size: 18px;
-    align-self: center;
-    flex-shrink: 0;
-}
-
-/* Controls */
-#controls {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-#progress-bar {
+    color: #666;
     flex: 1;
-    height: 4px;
-    background: #333;
-    border-radius: 2px;
-    overflow: hidden;
-}
-
-#progress-fill {
-    height: 100%;
-    width: 100%;
-    background: #f0c060;
-    border-radius: 2px;
-    transform-origin: left;
-    transform: scaleX(1);
-}
-
-#progress-fill.animating {
-    animation: gcd-drain linear forwards;
-}
-
-@keyframes gcd-drain {
-    from { transform: scaleX(1); }
-    to   { transform: scaleX(0); }
 }
 
 #start-btn {
     background: transparent;
-    border: 1px solid #555;
-    color: #ccc;
-    border-radius: 4px;
-    padding: 3px 10px;
+    border: 1px solid #444;
+    color: #888;
+    border-radius: 3px;
+    padding: 2px 8px;
     cursor: pointer;
     font-size: 11px;
-    white-space: nowrap;
     flex-shrink: 0;
 }
 #start-btn:hover { border-color: #f0c060; color: #f0c060; }
 #start-btn.running { border-color: #f0c060; color: #f0c060; }
-
-#step-counter {
-    font-size: 10px;
-    color: #555;
-    flex-shrink: 0;
-    min-width: 28px;
-    text-align: right;
-}
-
-/* Setup note */
-#setup-note {
-    font-size: 10px;
-    color: #888;
-    border-left: 2px solid #f0c060;
-    padding: 3px 6px;
-    line-height: 1.4;
-    background: rgba(240,192,96,0.05);
-    border-radius: 0 4px 4px 0;
-}
-#setup-note:empty { display: none; }
-
-/* Idle / no boss state */
-#overlay-main.idle .ability-card { border-color: #2a2a2a; background: transparent; }
-#overlay-main.idle #current-card .card-label { color: #555; }
-#overlay-main.idle .arrow { color: #333; }
