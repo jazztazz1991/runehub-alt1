@@ -18,10 +18,8 @@ const BOX_GAP = 8;
 const TOTAL_W = BOX_W * 3 + BOX_GAP * 2;
 
 // DOM
-const bossLabelEl  = document.getElementById('boss-label')!;
 const bossSelectEl = document.getElementById('boss-select') as HTMLSelectElement;
 const setupNoteEl  = document.getElementById('setup-note')!;
-const statusTextEl = document.getElementById('status-text')!;
 const stepCounter  = document.getElementById('step-counter')!;
 const startBtn     = document.getElementById('start-btn') as HTMLButtonElement;
 const resetBtn     = document.getElementById('reset-btn') as HTMLButtonElement;
@@ -97,8 +95,7 @@ function loadBoss(boss: BossRotation, phase: BossPhase): void {
     currentPhase = phase;
     rotationIndex = 0;
     initialHp = null;
-    bossLabelEl.textContent  = boss.bossName;
-    setupNoteEl.textContent  = boss.setupNote ?? '';
+    setupNoteEl.textContent = boss.setupNote ?? '';
     updatePanel();
     drawOverlay();
 }
@@ -108,19 +105,14 @@ function setIdle(): void {
     currentBoss  = null;
     currentPhase = null;
     rotationIndex = 0;
-    bossLabelEl.textContent  = 'RuneHub Rotation';
-    setupNoteEl.textContent  = '';
-    statusTextEl.textContent = 'Target a boss or select one above';
-    stepCounter.textContent  = '';
+    setupNoteEl.textContent = '';
+    stepCounter.textContent = '';
     clearOverlay();
 }
 
 function updatePanel(): void {
     if (!currentPhase) return;
-    const rotation = currentPhase.rotation;
-    const cur = rotation[rotationIndex];
-    statusTextEl.textContent = cur.note ? `${cur.name} — ${cur.note}` : cur.name;
-    stepCounter.textContent  = `${rotationIndex + 1}/${rotation.length}`;
+    stepCounter.textContent = `${rotationIndex + 1} / ${currentPhase.rotation.length}`;
 }
 
 // ── Boss detection ────────────────────────────────────────────────────────────

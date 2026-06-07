@@ -6,12 +6,12 @@ html, body {
     font-size: 12px;
     color: #e0e0e0;
     user-select: none;
-    width: 280px;
+    width: 260px;
 }
 
 #panel {
     background: rgba(0, 0, 0, 0.82);
-    border: 1px solid #333;
+    border: 1px solid #3a3a3a;
     border-radius: 6px;
     padding: 8px;
     display: flex;
@@ -19,90 +19,58 @@ html, body {
     gap: 6px;
 }
 
-#panel-header {
+/* Top row: step counter + buttons */
+#top-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-#boss-label {
-    font-size: 12px;
-    font-weight: 600;
-    color: #f0c060;
-}
-
-#header-controls {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
 #step-counter {
-    font-size: 10px;
-    color: #666;
+    font-size: 11px;
+    color: #f0c060;
+    font-weight: 600;
 }
 
-#reset-btn {
+#top-controls {
+    display: flex;
+    gap: 4px;
+}
+
+#start-btn, #reset-btn {
     background: transparent;
     border: 1px solid #444;
     color: #888;
     border-radius: 3px;
-    padding: 1px 5px;
+    padding: 2px 7px;
     cursor: pointer;
-    font-size: 12px;
-    line-height: 1;
+    font-size: 11px;
+    line-height: 1.4;
 }
-#reset-btn:hover { border-color: #f0c060; color: #f0c060; }
+#start-btn:hover, #reset-btn:hover { border-color: #f0c060; color: #f0c060; }
+#start-btn.running { border-color: #f0c060; color: #f0c060; }
 
-#boss-row select {
+/* Boss dropdown */
+#boss-select {
     width: 100%;
-    background: rgba(255,255,255,0.07);
-    border: 1px solid #444;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid #3a3a3a;
     color: #e0e0e0;
     border-radius: 4px;
-    padding: 4px 6px;
+    padding: 5px 8px;
     font-size: 12px;
     cursor: pointer;
 }
+#boss-select option { background: #1a1a1a; color: #e0e0e0; }
 
-#boss-row select option {
-    background: #1a1a1a;
-    color: #e0e0e0;
-}
-
+/* Setup note */
 #setup-note {
     font-size: 10px;
     color: #999;
     border-left: 2px solid #f0c060;
-    padding: 3px 6px;
+    padding: 3px 7px;
     background: rgba(240,192,96,0.05);
     border-radius: 0 3px 3px 0;
-    line-height: 1.4;
+    line-height: 1.5;
 }
 #setup-note:empty { display: none; }
-
-#status-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 6px;
-}
-
-#status-text {
-    font-size: 10px;
-    color: #666;
-    flex: 1;
-}
-
-#start-btn {
-    background: transparent;
-    border: 1px solid #444;
-    color: #888;
-    border-radius: 3px;
-    padding: 2px 8px;
-    cursor: pointer;
-    font-size: 11px;
-    flex-shrink: 0;
-}
-#start-btn:hover { border-color: #f0c060; color: #f0c060; }
-#start-btn.running { border-color: #f0c060; color: #f0c060; }
