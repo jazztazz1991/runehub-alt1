@@ -1,7 +1,12 @@
 {
     "appName": "RuneHub Rotation Helper",
-    "startfile": "index.html",
-    "configid": "runehub-rotation-helper",
     "description": "Boss rotation helper — shows your ability rotation for the current boss.",
-"permissions": ["pixel", "overlay", "gamestate"]
+    "appUrl": "./index.html",
+    "configUrl": "./appconfig.json",
+    "iconUrl": "./icon.png",
+    "defaultWidth": 320,
+    "defaultHeight": 400,
+    "minWidth": 260,
+    "minHeight": 100,
+    "permissions": "pixel, overlay, gamestate"
 }

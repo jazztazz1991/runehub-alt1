@@ -3,7 +3,7 @@ import TargetMobReader from 'alt1/targetmob';
 import { ROTATIONS, BOSS_NAME_MAP, BossPhase, BossRotation } from './rotations';
 
 if (a1lib.hasAlt1) {
-    alt1.identifyAppUrl('./appconfig.json');
+    alt1.identifyAppUrl('https://jazztazz1991.github.io/runehub-alt1/appconfig.json');
 }
 
 const reader = new TargetMobReader();
