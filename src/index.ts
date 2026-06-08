@@ -262,9 +262,10 @@ function drawOverlay(): void {
     console.log('[RH] draw x=' + x + ' y=' + y + ' phase=' + !!currentPhase + ' rsX=' + alt1.rsX + ' rsY=' + alt1.rsY + ' rsH=' + alt1.rsHeight);
     if (!isFinite(x) || !isFinite(y)) { console.log('[RH] bad coords, skipping'); return; }
 
-    const TIME = 600;
+    const TIME = 1500;
 
     alt1.overLaySetGroup(OV_GROUP);
+    alt1.overLayFreezeGroup(OV_GROUP);
     alt1.overLayClearGroup(OV_GROUP);
     console.log('[RH] group cleared, drawing boxes');
 
@@ -295,8 +296,8 @@ function drawOverlay(): void {
         );
     }
 
-    alt1.overLayRefreshGroup(OV_GROUP);
-    console.log('[RH] refreshed');
+    alt1.overLayContinueGroup(OV_GROUP);
+    console.log('[RH] continued');
 }
 
 function drawBox(x: number, y: number, name: string, iconKey: string | undefined, type: 'prev' | 'current' | 'next', time: number): void {
@@ -348,8 +349,9 @@ function drawBox(x: number, y: number, name: string, iconKey: string | undefined
 function clearOverlay(): void {
     if (!a1lib.hasAlt1) return;
     alt1.overLaySetGroup(OV_GROUP);
+    alt1.overLayFreezeGroup(OV_GROUP);
     alt1.overLayClearGroup(OV_GROUP);
-    alt1.overLayRefreshGroup(OV_GROUP);
+    alt1.overLayContinueGroup(OV_GROUP);
 }
 
 // ── Poll ──────────────────────────────────────────────────────────────────────
@@ -401,5 +403,18 @@ resetBtn.addEventListener('click', resetRotation);
 
 preloadRotationIcons();
 setIdle();
+
+if (a1lib.hasAlt1) {
+    // Boot-time sanity check: bright red rect for 5s at top-left of RS3 window.
+    // If this is NOT visible, the overlay API is broken for this setup.
+    const bx = alt1.rsX + 60, by = alt1.rsY + 60;
+    alt1.overLaySetGroup('rh-boot');
+    alt1.overLayFreezeGroup('rh-boot');
+    alt1.overLayClearGroup('rh-boot');
+    alt1.overLayRect(mixColor(255, 0, 0, 255), bx, by, 250, 80, 5000, 4);
+    alt1.overLayContinueGroup('rh-boot');
+    console.log('[RH] boot test rect at', bx, by, '— should be visible for 5s');
+}
+
 setInterval(poll, POLL_MS);
 poll();
