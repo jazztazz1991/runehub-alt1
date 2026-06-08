@@ -11,6 +11,54 @@ function mixColor(r: number, g: number, b: number, a: number = 255): number {
     return (((a & 0xff) << 24) | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff)) >>> 0;
 }
 
+// ── Icon loader ───────────────────────────────────────────────────────────────
+// alt1.overLayImage expects base64-encoded BGRA (not RGBA) at a fixed size.
+// Icons are served from our own GitHub Pages to avoid CORS.
+
+const ICON_SIZE = 40;
+const ICON_BASE = 'https://jazztazz1991.github.io/runehub-alt1/icons/';
+// Cache maps icon filename → BGRA base64 string, or null if load failed.
+const iconCache = new Map<string, string | null>();
+
+async function loadIcon(filename: string): Promise<void> {
+    if (iconCache.has(filename)) return;
+    iconCache.set(filename, null); // mark as pending so we don't double-fetch
+    try {
+        const resp = await fetch(ICON_BASE + filename + '.png');
+        const blob = await resp.blob();
+        const bitmap = await createImageBitmap(blob, { resizeWidth: ICON_SIZE, resizeHeight: ICON_SIZE });
+        const canvas = document.createElement('canvas');
+        canvas.width  = ICON_SIZE;
+        canvas.height = ICON_SIZE;
+        const ctx = canvas.getContext('2d')!;
+        ctx.drawImage(bitmap, 0, 0);
+        const { data: rgba } = ctx.getImageData(0, 0, ICON_SIZE, ICON_SIZE);
+        // alt1.overLayImage needs BGRA
+        const bgra = new Uint8Array(rgba.length);
+        for (let i = 0; i < rgba.length; i += 4) {
+            bgra[i]   = rgba[i + 2]; // B
+            bgra[i+1] = rgba[i + 1]; // G
+            bgra[i+2] = rgba[i];     // R
+            bgra[i+3] = rgba[i + 3]; // A
+        }
+        let bin = '';
+        for (let i = 0; i < bgra.length; i++) bin += String.fromCharCode(bgra[i]);
+        iconCache.set(filename, btoa(bin));
+    } catch {
+        iconCache.set(filename, null);
+    }
+}
+
+function preloadRotationIcons(): void {
+    for (const boss of Object.values(ROTATIONS)) {
+        for (const phase of boss.phases) {
+            for (const ability of phase.rotation) {
+                if (ability.icon) loadIcon(ability.icon);
+            }
+        }
+    }
+}
+
 const reader  = new TargetMobReader();
 const POLL_MS = 200;
 const GCD_MS  = 1800;
@@ -210,26 +258,35 @@ function drawOverlay(): void {
         clearOverlay();
         return;
     }
+    // Guard against RS3 not yet linked (rsWidth/rsHeight would be 0 or NaN)
+    if (!isFinite(alt1.rsX) || alt1.rsWidth <= 0) return;
 
     const { x, y } = getOverlayOrigin();
+    if (!isFinite(x) || !isFinite(y)) return;
+
     const TIME = 600;
 
     alt1.overLaySetGroup(OV_GROUP);
     alt1.overLayClearGroup(OV_GROUP);
 
-    // Resolve ability names (or placeholders when no rotation is loaded yet)
-    let prevName = 'Prev', curName = 'Now', nxtName = 'Next';
+    // Resolve abilities (or placeholders in positioning mode with no rotation loaded)
+    let prev = { name: 'Prev', icon: undefined as string | undefined };
+    let cur  = { name: 'Now',  icon: undefined as string | undefined };
+    let nxt  = { name: 'Next', icon: undefined as string | undefined };
     if (currentPhase) {
         const r = currentPhase.rotation;
         const l = r.length;
-        prevName = r[(rotationIndex - 1 + l) % l].name;
-        curName  = r[rotationIndex].name;
-        nxtName  = r[(rotationIndex + 1) % l].name;
+        const pa = r[(rotationIndex - 1 + l) % l];
+        const ca = r[rotationIndex];
+        const na = r[(rotationIndex + 1) % l];
+        prev = { name: pa.name, icon: pa.icon };
+        cur  = { name: ca.name, icon: ca.icon };
+        nxt  = { name: na.name, icon: na.icon };
     }
 
-    drawBox(x,                       y, prevName, 'prev',    TIME);
-    drawBox(x + BOX_W + BOX_GAP,     y, curName,  'current', TIME);
-    drawBox(x + (BOX_W + BOX_GAP)*2, y, nxtName,  'next',    TIME);
+    drawBox(x,                       y, prev.name, prev.icon, 'prev',    TIME);
+    drawBox(x + BOX_W + BOX_GAP,     y, cur.name,  cur.icon,  'current', TIME);
+    drawBox(x + (BOX_W + BOX_GAP)*2, y, nxt.name,  nxt.icon,  'next',    TIME);
 
     if (isSelectingLocation) {
         alt1.overLayTextEx(
@@ -242,25 +299,41 @@ function drawOverlay(): void {
     alt1.overLayRefreshGroup(OV_GROUP);
 }
 
-function drawBox(x: number, y: number, name: string, type: 'prev' | 'current' | 'next', time: number): void {
+function drawBox(x: number, y: number, name: string, iconKey: string | undefined, type: 'prev' | 'current' | 'next', time: number): void {
     const borderW     = type === 'current' ? 2 : 1;
     const borderColor = type === 'current'
         ? mixColor(240, 192, 96, 255)
         : mixColor(80, 80, 80, 180);
     alt1.overLayRect(borderColor, x, y, BOX_W, BOX_H, time, borderW);
 
-    if (type === 'current') {
-        alt1.overLayTextEx('NOW', mixColor(240, 192, 96, 220), 9, x + 4, y + 4, time, 'chatbox', false, false);
-    }
+    const iconBgra = iconKey ? iconCache.get(iconKey) ?? null : null;
 
-    const nameColor = type === 'prev'
-        ? mixColor(110, 110, 110, 255)
-        : type === 'next'
-            ? mixColor(190, 190, 190, 255)
-            : mixColor(255, 240, 160, 255);
-    const fontSize = type === 'current' ? 14 : 12;
-    const textY    = type === 'current' ? y + 18 : y + 16;
-    alt1.overLayTextEx(name, nameColor, fontSize, x + 6, textY, time, 'chatbox', true, false);
+    if (iconBgra) {
+        // Icon centered horizontally, vertically padded from top
+        const iconX = x + Math.floor((BOX_W - ICON_SIZE) / 2);
+        const iconY = y + 4;
+        alt1.overLayImage(iconX, iconY, iconBgra, ICON_SIZE, time);
+        // Small ability name label at bottom of box
+        const labelColor = type === 'prev'
+            ? mixColor(100, 100, 100, 220)
+            : type === 'next'
+                ? mixColor(160, 160, 160, 220)
+                : mixColor(240, 192, 96, 255);
+        alt1.overLayTextEx(name, labelColor, 9, x + 3, y + BOX_H - 12, time, 'chatbox', true, false);
+    } else {
+        // Fallback: text only (icon not loaded yet)
+        if (type === 'current') {
+            alt1.overLayTextEx('NOW', mixColor(240, 192, 96, 220), 9, x + 4, y + 4, time, 'chatbox', false, false);
+        }
+        const nameColor = type === 'prev'
+            ? mixColor(110, 110, 110, 255)
+            : type === 'next'
+                ? mixColor(190, 190, 190, 255)
+                : mixColor(255, 240, 160, 255);
+        const fontSize = type === 'current' ? 14 : 12;
+        const textY    = type === 'current' ? y + 18 : y + 16;
+        alt1.overLayTextEx(name, nameColor, fontSize, x + 6, textY, time, 'chatbox', true, false);
+    }
 }
 
 function clearOverlay(): void {
@@ -317,6 +390,7 @@ resetBtn.addEventListener('click', resetRotation);
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
 
+preloadRotationIcons();
 setIdle();
 setInterval(poll, POLL_MS);
 poll();

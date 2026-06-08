@@ -12,7 +12,7 @@ declare namespace alt1 {
     // Overlay API
     function overLayRect(color: number, x: number, y: number, w: number, h: number, time: number, lineWidth: number): void;
     function overLayTextEx(msg: string, color: number, size: number, x: number, y: number, time: number, fontName: string, shadow: boolean, kerning: boolean): void;
-    function overLayImage(imgdata: ImageData, x: number, y: number, time: number): void;
+    function overLayImage(x: number, y: number, imgstr: string, imgwidth: number, time: number): boolean;
     function overLaySetGroup(group: string): void;
     function overLayClearGroup(group: string): void;
     function overLayRefreshGroup(group: string): void;
