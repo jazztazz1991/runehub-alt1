@@ -259,13 +259,14 @@ function drawOverlay(): void {
         return;
     }
     const { x, y } = getOverlayOrigin();
-    console.log('[RH] draw x=' + x + ' y=' + y + ' phase=' + !!currentPhase + ' rsX=' + alt1.rsX + ' rsW=' + alt1.rsWidth);
-    if (!isFinite(x) || !isFinite(y)) { console.log('[RH] bad coords'); return; }
+    console.log('[RH] draw x=' + x + ' y=' + y + ' phase=' + !!currentPhase + ' rsX=' + alt1.rsX + ' rsY=' + alt1.rsY + ' rsH=' + alt1.rsHeight);
+    if (!isFinite(x) || !isFinite(y)) { console.log('[RH] bad coords, skipping'); return; }
 
     const TIME = 600;
 
     alt1.overLaySetGroup(OV_GROUP);
     alt1.overLayClearGroup(OV_GROUP);
+    console.log('[RH] group cleared, drawing boxes');
 
     // Resolve abilities (or placeholders in positioning mode with no rotation loaded)
     let prev = { name: 'Prev', icon: undefined as string | undefined };
@@ -295,6 +296,7 @@ function drawOverlay(): void {
     }
 
     alt1.overLayRefreshGroup(OV_GROUP);
+    console.log('[RH] refreshed');
 }
 
 function drawBox(x: number, y: number, name: string, iconKey: string | undefined, type: 'prev' | 'current' | 'next', time: number): void {
@@ -302,6 +304,7 @@ function drawBox(x: number, y: number, name: string, iconKey: string | undefined
     const borderColor = type === 'current'
         ? mixColor(240, 192, 96, 255)
         : mixColor(80, 80, 80, 180);
+    console.log('[RH] rect ' + type + ' x=' + x + ' y=' + y + ' color=' + borderColor);
     alt1.overLayRect(borderColor, x, y, BOX_W, BOX_H, time, borderW);
 
     const iconBgra = iconKey ? iconCache.get(iconKey) ?? null : null;
