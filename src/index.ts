@@ -47,10 +47,13 @@ if (storedRelX !== null && storedRelY !== null) {
 
 function getOverlayOrigin(): { x: number; y: number } {
     if (isSelectingLocation && a1lib.hasAlt1) {
-        return {
-            x: alt1.mouseX - Math.floor(TOTAL_W / 2),
-            y: alt1.mouseY - Math.floor(BOX_H  / 2),
-        };
+        const mpos = a1lib.getMousePosition();
+        if (mpos) {
+            return {
+                x: alt1.rsX + mpos.x - Math.floor(TOTAL_W / 2),
+                y: alt1.rsY + mpos.y - Math.floor(BOX_H  / 2),
+            };
+        }
     }
     if (hasCustomPosition && a1lib.hasAlt1) {
         return { x: alt1.rsX + ovRelX, y: alt1.rsY + ovRelY };
@@ -68,10 +71,9 @@ function enterPositioningMode(): void {
     drawOverlay();
 }
 
-function lockPosition(): void {
-    if (!a1lib.hasAlt1) return;
-    ovRelX = alt1.mouseX - alt1.rsX - Math.floor(TOTAL_W / 2);
-    ovRelY = alt1.mouseY - alt1.rsY - Math.floor(BOX_H  / 2);
+function lockPosition(rsRelX: number, rsRelY: number): void {
+    ovRelX = rsRelX - Math.floor(TOTAL_W / 2);
+    ovRelY = rsRelY - Math.floor(BOX_H  / 2);
     hasCustomPosition = true;
     localStorage.setItem('rh-ov-rx', String(ovRelX));
     localStorage.setItem('rh-ov-ry', String(ovRelY));
@@ -81,10 +83,12 @@ function lockPosition(): void {
     drawOverlay();
 }
 
-// Alt1 calls window[activatorId]() when the registered hotkey fires
-(window as any).setposition = function () {
-    if (isSelectingLocation) lockPosition();
-};
+// Alt+1 fires the alt1pressed event; e.mouseRs is RS3-window-relative coords
+a1lib.on('alt1pressed', (e) => {
+    if (isSelectingLocation) {
+        lockPosition(e.mouseRs.x, e.mouseRs.y);
+    }
+});
 
 setposBtn.addEventListener('click', enterPositioningMode);
 

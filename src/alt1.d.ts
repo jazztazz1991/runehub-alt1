@@ -6,9 +6,9 @@ declare namespace alt1 {
     var rsY: number;
     var rsWidth: number;
     var rsHeight: number;
-    // Mouse position (absolute screen coordinates)
-    var mouseX: number;
-    var mouseY: number;
+    // Mouse position packed as (x << 16 | y), -1 if outside RS3 window.
+    // Use a1lib.getMousePosition() for {x,y} form.
+    var mousePosition: number;
     // Overlay API
     function overLayRect(color: number, x: number, y: number, w: number, h: number, time: number, lineWidth: number): void;
     function overLayTextEx(msg: string, color: number, size: number, x: number, y: number, time: number, fontName: string, shadow: boolean, kerning: boolean): void;
