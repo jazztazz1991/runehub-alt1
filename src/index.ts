@@ -258,8 +258,6 @@ function drawOverlay(): void {
         clearOverlay();
         return;
     }
-    if (!alt1.rsLinked) return;
-
     const { x, y } = getOverlayOrigin();
     if (!isFinite(x) || !isFinite(y)) return;
 
