@@ -259,7 +259,8 @@ function drawOverlay(): void {
         return;
     }
     const { x, y } = getOverlayOrigin();
-    if (!isFinite(x) || !isFinite(y)) return;
+    console.log('[RH] draw x=' + x + ' y=' + y + ' phase=' + !!currentPhase + ' rsX=' + alt1.rsX + ' rsW=' + alt1.rsWidth);
+    if (!isFinite(x) || !isFinite(y)) { console.log('[RH] bad coords'); return; }
 
     const TIME = 600;
 
@@ -312,7 +313,7 @@ function drawBox(x: number, y: number, name: string, iconKey: string | undefined
         try {
             alt1.overLayImage(iconX, iconY, iconBgra, ICON_SIZE, time);
             iconDrawn = true;
-        } catch { /* fall through to text */ }
+        } catch (e) { console.log('[RH] overLayImage failed:', e); }
 
         if (iconDrawn) {
             const labelColor = type === 'prev'
