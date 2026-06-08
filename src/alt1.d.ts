@@ -6,6 +6,7 @@ declare namespace alt1 {
     var rsY: number;
     var rsWidth: number;
     var rsHeight: number;
+    var rsLinked: boolean;
     // Mouse position packed as (x << 16 | y), -1 if outside RS3 window.
     // Use a1lib.getMousePosition() for {x,y} form.
     var mousePosition: number;

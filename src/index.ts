@@ -258,8 +258,7 @@ function drawOverlay(): void {
         clearOverlay();
         return;
     }
-    // Guard against RS3 not yet linked (rsWidth/rsHeight would be 0 or NaN)
-    if (!isFinite(alt1.rsX) || alt1.rsWidth <= 0) return;
+    if (!alt1.rsLinked) return;
 
     const { x, y } = getOverlayOrigin();
     if (!isFinite(x) || !isFinite(y)) return;
@@ -309,18 +308,26 @@ function drawBox(x: number, y: number, name: string, iconKey: string | undefined
     const iconBgra = iconKey ? iconCache.get(iconKey) ?? null : null;
 
     if (iconBgra) {
-        // Icon centered horizontally, vertically padded from top
         const iconX = x + Math.floor((BOX_W - ICON_SIZE) / 2);
         const iconY = y + 4;
-        alt1.overLayImage(iconX, iconY, iconBgra, ICON_SIZE, time);
-        // Small ability name label at bottom of box
-        const labelColor = type === 'prev'
-            ? mixColor(100, 100, 100, 220)
-            : type === 'next'
-                ? mixColor(160, 160, 160, 220)
-                : mixColor(240, 192, 96, 255);
-        alt1.overLayTextEx(name, labelColor, 9, x + 3, y + BOX_H - 12, time, 'chatbox', true, false);
-    } else {
+        let iconDrawn = false;
+        try {
+            alt1.overLayImage(iconX, iconY, iconBgra, ICON_SIZE, time);
+            iconDrawn = true;
+        } catch { /* fall through to text */ }
+
+        if (iconDrawn) {
+            const labelColor = type === 'prev'
+                ? mixColor(100, 100, 100, 220)
+                : type === 'next'
+                    ? mixColor(160, 160, 160, 220)
+                    : mixColor(240, 192, 96, 255);
+            alt1.overLayTextEx(name, labelColor, 9, x + 3, y + BOX_H - 12, time, 'chatbox', true, false);
+            return;
+        }
+    }
+
+    {
         // Fallback: text only (icon not loaded yet)
         if (type === 'current') {
             alt1.overLayTextEx('NOW', mixColor(240, 192, 96, 220), 9, x + 4, y + 4, time, 'chatbox', false, false);
