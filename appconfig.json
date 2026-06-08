@@ -5,7 +5,7 @@
     "configUrl": "./appconfig.json",
     "iconUrl": "./icon.png",
     "defaultWidth": 290,
-    "defaultHeight": 140,
+    "defaultHeight": 210,
     "minWidth": 260,
     "minHeight": 80,
     "permissions": "pixel, overlay, gamestate",

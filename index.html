@@ -7,6 +7,7 @@
     <link rel="manifest" href="appconfig.json" id="alt1-appconfig" />
 </head>
 <body>
+    <!-- Main panel -->
     <div id="panel">
         <div id="top-row">
             <span id="step-counter"></span>
@@ -23,7 +24,58 @@
         <div id="setup-note"></div>
 
         <button id="setpos-btn" title="Move overlay to mouse position, then press Alt+1">⊕ Set Overlay Position</button>
+        <button id="edit-rotations-btn">✎ Edit rotations</button>
     </div>
+
+    <!-- Editor: list of custom rotations -->
+    <div id="editor-list" class="ed-page" style="display:none">
+        <div class="ed-header">
+            <button class="ed-back" id="list-back-btn">◀</button>
+            <span class="ed-title">My Rotations</span>
+            <button class="ed-add-btn" id="new-rotation-btn" title="New rotation">＋</button>
+        </div>
+        <div id="custom-list-items"></div>
+        <p id="custom-list-empty" class="ed-empty">No rotations yet.<br/>Press ＋ to create one.</p>
+    </div>
+
+    <!-- Editor: single rotation detail/edit -->
+    <div id="editor-detail" class="ed-page" style="display:none">
+        <div class="ed-header">
+            <button class="ed-back" id="detail-back-btn">◀</button>
+            <span class="ed-title" id="detail-title">New Rotation</span>
+        </div>
+        <div class="ed-form">
+            <div class="ed-field">
+                <label>Name</label>
+                <input id="ed-name" type="text" placeholder="e.g. Zamorak P1" maxlength="30" />
+            </div>
+            <div class="ed-field">
+                <label>Auto-detect <span class="ed-hint">(OCR target name, lowercase)</span></label>
+                <input id="ed-boss-target" type="text" placeholder="e.g. lord of chaos" />
+            </div>
+            <div class="ed-field">
+                <label>Style</label>
+                <select id="ed-style">
+                    <option value="melee">Melee</option>
+                    <option value="ranged">Ranged</option>
+                    <option value="magic">Magic</option>
+                    <option value="necromancy" selected>Necromancy</option>
+                </select>
+            </div>
+            <div class="ed-field">
+                <label>Setup note <span class="ed-hint">(optional)</span></label>
+                <input id="ed-setup-note" type="text" placeholder="Gear / prayer reminder" maxlength="80" />
+            </div>
+        </div>
+        <div class="ed-section-label">Abilities</div>
+        <div id="ed-ability-list"></div>
+        <button id="ed-add-ability">＋ Add ability</button>
+        <div class="ed-footer">
+            <button id="ed-delete-btn" class="ed-danger" style="display:none">Delete</button>
+            <button id="ed-save-btn" class="ed-save">Save</button>
+        </div>
+    </div>
+
     <script src="dist/index.js"></script>
 </body>
 </html>

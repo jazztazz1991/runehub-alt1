@@ -98,3 +98,243 @@ html, body {
     line-height: 1.5;
 }
 #setup-note:empty { display: none; }
+
+/* Edit rotations button */
+#edit-rotations-btn {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid #444;
+    color: #777;
+    border-radius: 3px;
+    padding: 5px 8px;
+    cursor: pointer;
+    font-size: 11px;
+    text-align: center;
+}
+#edit-rotations-btn:hover { border-color: #f0c060; color: #f0c060; }
+
+/* ── Editor pages ─────────────────────────────────────────────────────────── */
+
+.ed-page {
+    background: rgba(0, 0, 0, 0.82);
+    border: 1px solid #3a3a3a;
+    border-radius: 6px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* Header row: back button + title + optional add button */
+.ed-header {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.ed-back {
+    background: transparent;
+    border: 1px solid #444;
+    color: #888;
+    border-radius: 3px;
+    padding: 2px 7px;
+    cursor: pointer;
+    font-size: 11px;
+    flex-shrink: 0;
+}
+.ed-back:hover { border-color: #f0c060; color: #f0c060; }
+
+.ed-title {
+    flex: 1;
+    font-size: 11px;
+    font-weight: 600;
+    color: #e0e0e0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ed-add-btn {
+    background: transparent;
+    border: 1px solid #444;
+    color: #888;
+    border-radius: 3px;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    line-height: 1;
+    flex-shrink: 0;
+}
+.ed-add-btn:hover { border-color: #f0c060; color: #f0c060; }
+
+/* Custom rotation list */
+.ed-list-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 2px;
+    border-bottom: 1px solid #252525;
+}
+.ed-list-name {
+    flex: 1;
+    font-size: 11px;
+    color: #c0c0c0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.ed-list-btn {
+    background: transparent;
+    border: 1px solid #333;
+    color: #666;
+    border-radius: 2px;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    font-size: 11px;
+    padding: 0;
+    flex-shrink: 0;
+    line-height: 1;
+}
+.ed-list-btn:hover { border-color: #888; color: #aaa; }
+
+.ed-empty {
+    font-size: 11px;
+    color: #555;
+    text-align: center;
+    padding: 14px 0;
+    line-height: 1.7;
+}
+
+/* Form fields */
+.ed-form { display: flex; flex-direction: column; gap: 4px; }
+
+.ed-field { display: flex; flex-direction: column; gap: 2px; }
+
+.ed-field label {
+    font-size: 10px;
+    color: #777;
+}
+.ed-hint { color: #555; font-size: 9px; }
+
+.ed-field input,
+.ed-field select {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid #333;
+    color: #e0e0e0;
+    border-radius: 3px;
+    padding: 4px 6px;
+    font-size: 11px;
+    width: 100%;
+    font-family: inherit;
+}
+.ed-field input:focus,
+.ed-field select:focus { outline: none; border-color: #f0c060; }
+.ed-field select option { background: #1a1a1a; }
+
+/* Ability list */
+.ed-section-label {
+    font-size: 10px;
+    color: #777;
+    margin-top: 2px;
+}
+
+#ed-ability-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.ed-ability-row {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+.ed-ability-idx {
+    font-size: 10px;
+    color: #555;
+    width: 16px;
+    text-align: right;
+    flex-shrink: 0;
+}
+.ed-ability-name {
+    flex: 1;
+    min-width: 0;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid #333;
+    color: #e0e0e0;
+    border-radius: 3px;
+    padding: 3px 5px;
+    font-size: 11px;
+    font-family: inherit;
+}
+.ed-ability-name:focus { outline: none; border-color: #f0c060; }
+
+.ed-ab-btn {
+    background: transparent;
+    border: 1px solid #2e2e2e;
+    color: #555;
+    border-radius: 2px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    font-size: 10px;
+    padding: 0;
+    flex-shrink: 0;
+    line-height: 1;
+}
+.ed-ab-btn:hover:not(:disabled) { border-color: #777; color: #aaa; }
+.ed-ab-btn:disabled { opacity: 0.25; cursor: default; }
+.ed-ab-del:hover:not(:disabled) { border-color: #904040; color: #c05050; }
+
+#ed-add-ability {
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1px dashed #333;
+    color: #666;
+    border-radius: 3px;
+    padding: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    text-align: center;
+    margin-top: 1px;
+}
+#ed-add-ability:hover { border-color: #f0c060; color: #f0c060; border-style: solid; }
+
+/* Footer: delete + save */
+.ed-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 2px;
+    padding-top: 5px;
+    border-top: 1px solid #2a2a2a;
+}
+
+.ed-save {
+    background: rgba(240,192,96,0.1);
+    border: 1px solid #f0c060;
+    color: #f0c060;
+    border-radius: 3px;
+    padding: 4px 14px;
+    cursor: pointer;
+    font-size: 11px;
+}
+.ed-save:hover { background: rgba(240,192,96,0.2); }
+
+.ed-danger {
+    background: transparent;
+    border: 1px solid #804040;
+    color: #a05050;
+    border-radius: 3px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 11px;
+}
+.ed-danger:hover { border-color: #c05050; color: #e06060; background: rgba(192,80,80,0.08); }

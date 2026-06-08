@@ -53,3 +53,12 @@ export const ROTATIONS: Record<string, BossRotation> = {
 export const BOSS_NAME_MAP: [string, string][] = [
     ['king black dragon', 'KBD'],
 ];
+
+export interface SavedCustomRotation {
+    id: string;
+    name: string;
+    bossTarget?: string;  // lowercase OCR trigger substring
+    style: 'ranged' | 'necromancy' | 'melee' | 'magic';
+    setupNote?: string;
+    abilities: Array<{ name: string }>;
+}
