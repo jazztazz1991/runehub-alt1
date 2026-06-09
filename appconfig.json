@@ -4,9 +4,9 @@
     "appUrl": "./index.html",
     "configUrl": "./appconfig.json",
     "iconUrl": "./icon.png",
-    "defaultWidth": 290,
-    "defaultHeight": 210,
-    "minWidth": 260,
+    "defaultWidth": 400,
+    "defaultHeight": 500,
+    "minWidth": 280,
     "minHeight": 80,
     "permissions": "pixel, overlay, gamestate",
     "activators": [
