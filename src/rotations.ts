@@ -30,17 +30,17 @@ export const ROTATIONS: Record<string, BossRotation> = {
                 label: 'Main fight',
                 triggerTarget: 'king black dragon',
                 rotation: [
-                    { name: 'Invoke Death',    icon: 'invoke_death',    note: 'Open with this — gives free Finger of Death hit' },
-                    { name: 'Living Death',    icon: 'living_death',    note: 'Pop ult immediately after' },
-                    { name: 'Touch of Death',  icon: 'touch_of_death',  note: 'Builds residual soul stacks' },
-                    { name: 'Death Skulls',    icon: 'death_skulls',    note: 'Main damage — bounces 4x under Living Death' },
-                    { name: 'Finger of Death', icon: 'finger_of_death', note: 'Use at 6+ necrosis stacks for best damage' },
-                    { name: 'Touch of Death',  icon: 'touch_of_death' },
-                    { name: 'Volley of Souls', icon: 'volley_of_souls', note: 'Use at 3 residual soul stacks' },
-                    { name: 'Death Skulls',    icon: 'death_skulls' },
-                    { name: 'Soul Sap',        icon: 'soul_sap',        note: 'Build necrosis stacks between Skulls' },
-                    { name: 'Touch of Death',  icon: 'touch_of_death' },
-                    { name: 'Finger of Death', icon: 'finger_of_death' },
+                    { name: 'Invoke Death',    icon: 'Invoke_Death',    note: 'Open with this — gives free Finger of Death hit' },
+                    { name: 'Living Death',    icon: 'Living_Death',    note: 'Pop ult immediately after' },
+                    { name: 'Touch of Death',  icon: 'Touch_of_Death',  note: 'Builds residual soul stacks' },
+                    { name: 'Death Skulls',    icon: 'Death_Skulls',    note: 'Main damage — bounces 4x under Living Death' },
+                    { name: 'Finger of Death', icon: 'Finger_of_Death', note: 'Use at 6+ necrosis stacks for best damage' },
+                    { name: 'Touch of Death',  icon: 'Touch_of_Death' },
+                    { name: 'Volley of Souls', icon: 'Volley_of_Souls', note: 'Use at 3 residual soul stacks' },
+                    { name: 'Death Skulls',    icon: 'Death_Skulls' },
+                    { name: 'Soul Sap',        icon: 'Soul_Sap',        note: 'Build necrosis stacks between Skulls' },
+                    { name: 'Touch of Death',  icon: 'Touch_of_Death' },
+                    { name: 'Finger of Death', icon: 'Finger_of_Death' },
                     { name: '↩ Repeat',                                 note: 'Loop from Death Skulls when Living Death is up again' },
                 ],
             },
@@ -60,5 +60,5 @@ export interface SavedCustomRotation {
     bossTarget?: string;  // lowercase OCR trigger substring
     style: 'ranged' | 'necromancy' | 'melee' | 'magic';
     setupNote?: string;
-    abilities: Array<{ name: string }>;
+    abilities: Array<{ name: string; icon?: string }>;
 }
