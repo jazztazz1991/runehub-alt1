@@ -1,24 +1,25 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 html, body {
-    background: transparent;
+    background: rgba(0, 0, 0, 0.88);
     font-family: 'Segoe UI', sans-serif;
     font-size: 12px;
     color: #e0e0e0;
     user-select: none;
     width: 100%;
+    height: 100vh;
+    overflow: hidden;
     min-width: 260px;
 }
 
 #panel {
-    width: 260px;
-    background: rgba(0, 0, 0, 0.82);
-    border: 1px solid #3a3a3a;
-    border-radius: 6px;
-    padding: 8px;
+    width: 100%;
+    height: 100vh;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 6px;
+    overflow-y: auto;
 }
 
 /* Top row: step counter + buttons */
@@ -119,13 +120,12 @@ html, body {
 
 .ed-page {
     width: 100%;
-    background: rgba(0, 0, 0, 0.82);
-    border: 1px solid #3a3a3a;
-    border-radius: 6px;
-    padding: 8px;
+    height: 100vh;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     gap: 5px;
+    overflow-y: auto;
 }
 
 /* Header row: back button + title + optional add button */
@@ -352,9 +352,7 @@ html, body {
 /* ── Ability picker ──────────────────────────────────────────────────────── */
 
 #ability-picker {
-    height: calc(100vh - 4px);
-    display: flex !important;
-    flex-direction: column;
+    overflow: hidden;
 }
 
 #picker-tabs {
