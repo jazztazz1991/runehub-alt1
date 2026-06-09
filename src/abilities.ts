@@ -1,5 +1,5 @@
 export type CombatStyle = 'melee' | 'ranged' | 'magic' | 'necromancy';
-export type AbilityCategory = 'basic' | 'enhanced' | 'ultimate' | 'utility' | 'special';
+export type AbilityCategory = 'basic' | 'enhanced' | 'ultimate' | 'utility' | 'special' | 'greater';
 
 export interface AbilityDef {
     name: string;
@@ -57,15 +57,25 @@ export const ABILITIES: Record<CombatStyle, Record<AbilityCategory, AbilityDef[]
             { name: 'Shatter',          wikiFile: 'Shatter' },
         ],
         special: [
-            { name: 'ZGS',          wikiFile: 'Zaros_godsword' },
-            { name: 'Dragon Claws', wikiFile: 'Dragon_claw' },
-            { name: 'Nox Scythe',   wikiFile: 'Noxious_scythe' },
-            { name: 'SWH',          wikiFile: "Statius's_warhammer" },
-            { name: 'Vine Whip',    wikiFile: 'Abyssal_vine_whip' },
-            { name: 'Annihilation', wikiFile: 'Annihilation' },
-            { name: 'Khopesh',      wikiFile: 'Khopesh_of_the_Kharidian' },
-            { name: 'Ek-ZekKil',    wikiFile: 'Ek-ZekKil' },
-            { name: 'Excalibur',    wikiFile: 'Enhanced_Excalibur' },
+            { name: 'Dragon Claws',     wikiFile: 'Dragon_claw' },
+            { name: 'SWH',              wikiFile: "Statius's_warhammer" },
+            { name: 'Annihilation',     wikiFile: 'Annihilation' },
+            { name: 'Sara GS',          wikiFile: 'Saradomin_godsword' },
+            { name: 'Arma GS',          wikiFile: 'Armadyl_godsword' },
+            { name: 'Dragon Hatchet',   wikiFile: 'Dragon_hatchet' },
+            { name: 'Crystal Hatchet',  wikiFile: 'Crystal_hatchet' },
+            { name: 'Dragon Mace',      wikiFile: 'Dragon_mace' },
+            { name: 'Dragon Dagger',    wikiFile: 'Dragon_dagger' },
+            { name: 'Dragon Long',      wikiFile: 'Dragon_longsword' },
+            { name: 'Dragon 2h',        wikiFile: 'Dragon_2h_sword' },
+            { name: 'Granite Maul',     wikiFile: 'Granite_maul' },
+            { name: "Vesta's Spear",    wikiFile: "Vesta's_spear" },
+            { name: "Varanus's Mercy",  wikiFile: "Varanus's_Mercy" },
+        ],
+        greater: [
+            { name: 'Greater Barge',  wikiFile: 'Greater_Barge' },
+            { name: 'Greater Fury',   wikiFile: 'Greater_Fury' },
+            { name: 'Greater Flurry', wikiFile: 'Greater_Flurry' },
         ],
     },
     ranged: {
@@ -100,11 +110,18 @@ export const ABILITIES: Record<CombatStyle, Record<AbilityCategory, AbilityDef[]
             { name: 'Provoke',      wikiFile: 'Provoke' },
         ],
         special: [
-            { name: 'SGB',      wikiFile: 'Seren_godbow' },
-            { name: 'ECB',      wikiFile: 'Eldritch_crossbow' },
-            { name: 'BotLG',    wikiFile: 'Bow_of_the_Last_Guardian' },
-            { name: 'Dark Bow', wikiFile: 'Dark_bow' },
-            { name: 'Deci',     wikiFile: 'Decimation' },
+            { name: 'SGB',       wikiFile: 'Seren_godbow' },
+            { name: 'ECB',       wikiFile: 'Eldritch_crossbow' },
+            { name: 'Decimation', wikiFile: 'Decimation' },
+            { name: 'Dark Bow',  wikiFile: 'Dark_bow' },
+            { name: 'Rune Axe',  wikiFile: 'Rune_throwing_axe' },
+            { name: 'Gloomfire', wikiFile: 'Gloomfire_bow' },
+            { name: 'Zammy Bow', wikiFile: 'Zamorak_bow' },
+        ],
+        greater: [
+            { name: 'Greater Ricochet',          wikiFile: 'Greater_Ricochet' },
+            { name: "Greater Death's Swiftness", wikiFile: "Greater_Death's_Swiftness" },
+            { name: 'Greater Dazing Shot',       wikiFile: 'Greater_Dazing_Shot' },
         ],
     },
     magic: {
@@ -139,11 +156,19 @@ export const ABILITIES: Record<CombatStyle, Record<AbilityCategory, AbilityDef[]
             { name: 'Resonance',     wikiFile: 'Resonance' },
         ],
         special: [
-            { name: 'SoS',         wikiFile: 'Staff_of_Sliske' },
-            { name: 'ABS',         wikiFile: 'Armadyl_battlestaff' },
-            { name: 'Guthix Staff', wikiFile: 'Guthix_staff' },
-            { name: 'Obliteration', wikiFile: 'Obliteration' },
-            { name: 'Nox Staff',   wikiFile: 'Noxious_staff' },
+            { name: 'Guthix Staff',    wikiFile: 'Guthix_staff' },
+            { name: 'Zammy Staff',     wikiFile: 'Zamorak_staff' },
+            { name: 'ABS',             wikiFile: 'Armadyl_battlestaff' },
+            { name: 'Staff of Light',  wikiFile: 'Staff_of_light' },
+            { name: 'Penance Trident', wikiFile: 'Penance_trident' },
+            { name: "Iban's Staff",    wikiFile: "Iban's_staff" },
+            { name: 'Legatus Staff',   wikiFile: "Legatus's_Emberstaff" },
+        ],
+        greater: [
+            { name: 'Greater Concentrated Blast', wikiFile: 'Greater_Concentrated_Blast' },
+            { name: 'Greater Chain',              wikiFile: 'Greater_Chain' },
+            { name: 'Greater Sonic Wave',         wikiFile: 'Greater_Sonic_Wave' },
+            { name: 'Greater Sunshine',           wikiFile: 'Greater_Sunshine' },
         ],
     },
     necromancy: {
@@ -181,8 +206,9 @@ export const ABILITIES: Record<CombatStyle, Record<AbilityCategory, AbilityDef[]
             { name: 'Darkness',                 wikiFile: 'Darkness_icon' },
         ],
         special: [
-            { name: 'Omni Guard', wikiFile: 'Omni_guard' },
+            { name: 'Death Guard', wikiFile: 'Death_guard' },
         ],
+        greater: [],
     },
 };
 
@@ -192,6 +218,7 @@ export const CATEGORY_LABELS: Record<AbilityCategory, string> = {
     ultimate: 'ULTIMATE ABILITY',
     utility:  'UTILITY ABILITY',
     special:  'SPECIAL ATTACK / EoF',
+    greater:  'GREATER ABILITY',
 };
 
 export const STYLE_LABELS: Record<CombatStyle, string> = {
