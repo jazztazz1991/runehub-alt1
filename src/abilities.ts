@@ -123,19 +123,18 @@ export const ABILITIES: Record<CombatStyle, Record<AbilityCategory, AbilityDef[]
     },
     necromancy: {
         basic: [
+            { name: 'Necromancy',      wikiFile: 'Necromancy_(ability)' },
             { name: 'Soul Sap',        wikiFile: 'Soul_Sap' },
             { name: 'Touch of Death',  wikiFile: 'Touch_of_Death' },
-            { name: 'Bone Shield',     wikiFile: 'Bone_Shield_sprite' },
             { name: 'Spectral Scythe', wikiFile: 'Spectral_Scythe' },
         ],
         enhanced: [
             { name: 'Bloat',               wikiFile: 'Bloat' },
-            { name: 'Skeletal Claws' },
             { name: 'Blood Siphon',        wikiFile: 'Blood_Siphon' },
             { name: 'Volley of Souls',     wikiFile: 'Volley_of_Souls' },
-            { name: 'Spectral Scythe II',  wikiFile: 'Spectral_Scythe_2' },
             { name: 'Soul Strike',         wikiFile: 'Soul_Strike' },
-            { name: 'Spite' },
+            { name: 'Spectral Scythe II',  wikiFile: 'Spectral_Scythe_2' },
+            { name: 'Spectral Scythe III', wikiFile: 'Spectral_Scythe_3' },
         ],
         ultimate: [
             { name: 'Death Skulls',    wikiFile: 'Death_Skulls' },
@@ -145,13 +144,14 @@ export const ABILITIES: Record<CombatStyle, Record<AbilityCategory, AbilityDef[]
         ],
         utility: [
             { name: 'Conjure Undead Army',      wikiFile: 'Conjure_Undead_Army' },
-            { name: 'Command Undead Army' },
             { name: 'Conjure Skeleton Warrior', wikiFile: 'Conjure_Skeleton_Warrior' },
             { name: 'Command Skeleton Warrior', wikiFile: 'Command_Skeleton_Warrior' },
             { name: 'Conjure Putrid Zombie',    wikiFile: 'Conjure_Putrid_Zombie' },
             { name: 'Command Putrid Zombie',    wikiFile: 'Command_Putrid_Zombie' },
             { name: 'Conjure Vengeful Ghost',   wikiFile: 'Conjure_Vengeful_Ghost' },
             { name: 'Command Vengeful Ghost',   wikiFile: 'Command_Vengeful_Ghost' },
+            { name: 'Conjure Phantom Guardian', wikiFile: 'Conjure_Phantom_Guardian' },
+            { name: 'Command Phantom Guardian', wikiFile: 'Command_Phantom_Guardian' },
             { name: 'Life Transfer',            wikiFile: 'Life_Transfer_icon' },
             { name: 'Darkness',                 wikiFile: 'Darkness_icon' },
             { name: 'Soulbound Lantern',        wikiFile: 'Soulbound_lantern' },
