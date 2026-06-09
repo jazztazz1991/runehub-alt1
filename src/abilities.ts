@@ -1,5 +1,5 @@
 export type CombatStyle = 'melee' | 'ranged' | 'magic' | 'necromancy';
-export type AbilityCategory = 'basic' | 'enhanced' | 'ultimate' | 'utility';
+export type AbilityCategory = 'basic' | 'enhanced' | 'ultimate' | 'utility' | 'special';
 
 export interface AbilityDef {
     name: string;
@@ -56,6 +56,17 @@ export const ABILITIES: Record<CombatStyle, Record<AbilityCategory, AbilityDef[]
             { name: 'Revenge',          wikiFile: 'Revenge' },
             { name: 'Shatter',          wikiFile: 'Shatter' },
         ],
+        special: [
+            { name: 'ZGS',          wikiFile: 'Zaros_godsword' },
+            { name: 'Dragon Claws', wikiFile: 'Dragon_claw' },
+            { name: 'Nox Scythe',   wikiFile: 'Noxious_scythe' },
+            { name: 'SWH',          wikiFile: "Statius's_warhammer" },
+            { name: 'Vine Whip',    wikiFile: 'Abyssal_vine_whip' },
+            { name: 'Annihilation', wikiFile: 'Annihilation' },
+            { name: 'Khopesh',      wikiFile: 'Khopesh_of_the_Kharidian' },
+            { name: 'Ek-ZekKil',    wikiFile: 'Ek-ZekKil' },
+            { name: 'Excalibur',    wikiFile: 'Enhanced_Excalibur' },
+        ],
     },
     ranged: {
         basic: [
@@ -88,6 +99,13 @@ export const ABILITIES: Record<CombatStyle, Record<AbilityCategory, AbilityDef[]
             { name: 'Resonance',    wikiFile: 'Resonance' },
             { name: 'Provoke',      wikiFile: 'Provoke' },
         ],
+        special: [
+            { name: 'SGB',      wikiFile: 'Seren_godbow' },
+            { name: 'ECB',      wikiFile: 'Eldritch_crossbow' },
+            { name: 'BotLG',    wikiFile: 'Bow_of_the_Last_Guardian' },
+            { name: 'Dark Bow', wikiFile: 'Dark_bow' },
+            { name: 'Deci',     wikiFile: 'Decimation' },
+        ],
     },
     magic: {
         basic: [
@@ -119,6 +137,13 @@ export const ABILITIES: Record<CombatStyle, Record<AbilityCategory, AbilityDef[]
             { name: 'Anticipation',  wikiFile: 'Anticipation' },
             { name: 'Surge',         wikiFile: 'Surge' },
             { name: 'Resonance',     wikiFile: 'Resonance' },
+        ],
+        special: [
+            { name: 'SoS',         wikiFile: 'Staff_of_Sliske' },
+            { name: 'ABS',         wikiFile: 'Armadyl_battlestaff' },
+            { name: 'Guthix Staff', wikiFile: 'Guthix_staff' },
+            { name: 'Obliteration', wikiFile: 'Obliteration' },
+            { name: 'Nox Staff',   wikiFile: 'Noxious_staff' },
         ],
     },
     necromancy: {
@@ -156,6 +181,7 @@ export const ABILITIES: Record<CombatStyle, Record<AbilityCategory, AbilityDef[]
             { name: 'Darkness',                 wikiFile: 'Darkness_icon' },
             { name: 'Soulbound Lantern',        wikiFile: 'Soulbound_lantern' },
         ],
+        special: [],
     },
 };
 
@@ -164,6 +190,7 @@ export const CATEGORY_LABELS: Record<AbilityCategory, string> = {
     enhanced: 'ENHANCED ABILITY',
     ultimate: 'ULTIMATE ABILITY',
     utility:  'UTILITY ABILITY',
+    special:  'SPECIAL ATTACK / EoF',
 };
 
 export const STYLE_LABELS: Record<CombatStyle, string> = {

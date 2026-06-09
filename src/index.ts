@@ -546,7 +546,7 @@ function renderPickerTabs(): void {
 
 function renderPickerGrid(style: CombatStyle): void {
     pickerGridEl.innerHTML = '';
-    const cats: AbilityCategory[] = ['basic', 'enhanced', 'ultimate', 'utility'];
+    const cats: AbilityCategory[] = ['basic', 'enhanced', 'ultimate', 'utility', 'special'];
     for (const cat of cats) {
         const abilities = ABILITIES[style][cat];
         if (!abilities.length) continue;
