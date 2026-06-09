@@ -181,7 +181,9 @@ export const ABILITIES: Record<CombatStyle, Record<AbilityCategory, AbilityDef[]
             { name: 'Darkness',                 wikiFile: 'Darkness_icon' },
             { name: 'Soulbound Lantern',        wikiFile: 'Soulbound_lantern' },
         ],
-        special: [],
+        special: [
+            { name: 'Omni Guard', wikiFile: 'Omni_guard' },
+        ],
     },
 };
 
