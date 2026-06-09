@@ -179,7 +179,6 @@ export const ABILITIES: Record<CombatStyle, Record<AbilityCategory, AbilityDef[]
             { name: 'Command Phantom Guardian', wikiFile: 'Command_Phantom_Guardian' },
             { name: 'Life Transfer',            wikiFile: 'Life_Transfer_icon' },
             { name: 'Darkness',                 wikiFile: 'Darkness_icon' },
-            { name: 'Soulbound Lantern',        wikiFile: 'Soulbound_lantern' },
         ],
         special: [
             { name: 'Omni Guard', wikiFile: 'Omni_guard' },
