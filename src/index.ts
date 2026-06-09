@@ -564,16 +564,24 @@ function renderPickerGrid(style: CombatStyle): void {
             cell.className = 'picker-ability';
             cell.title = ab.name;
 
-            const img = document.createElement('img');
-            img.src = WIKI_IMG + ab.wikiFile + '.png';
-            img.width = 32; img.height = 32;
-            img.alt = ab.name;
-            img.onerror = () => { img.style.opacity = '0.3'; };
+            if (ab.wikiFile) {
+                const img = document.createElement('img');
+                img.src = WIKI_IMG + ab.wikiFile + '.png';
+                img.width = 32; img.height = 32;
+                img.alt = ab.name;
+                img.onerror = () => { img.style.opacity = '0.3'; };
+                cell.appendChild(img);
+            } else {
+                const ph = document.createElement('div');
+                ph.className = 'picker-no-img';
+                ph.textContent = ab.name.charAt(0).toUpperCase();
+                cell.appendChild(ph);
+            }
 
             const label = document.createElement('span');
             label.textContent = ab.name;
 
-            cell.append(img, label);
+            cell.appendChild(label);
             cell.addEventListener('click', () => pickAbility(ab.name, ab.wikiFile));
             grid.appendChild(cell);
         }
@@ -582,9 +590,9 @@ function renderPickerGrid(style: CombatStyle): void {
     }
 }
 
-function pickAbility(name: string, wikiFile: string): void {
+function pickAbility(name: string, wikiFile?: string): void {
     edAbilities.push({ name, icon: wikiFile });
-    loadIcon(wikiFile);
+    if (wikiFile) loadIcon(wikiFile);
     renderAbilityRows();
     showPage('detail');
 }

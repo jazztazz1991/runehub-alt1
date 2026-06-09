@@ -30,7 +30,7 @@ export const ROTATIONS: Record<string, BossRotation> = {
                 label: 'Main fight',
                 triggerTarget: 'king black dragon',
                 rotation: [
-                    { name: 'Invoke Death',    icon: 'Invoke_Death',    note: 'Open with this — gives free Finger of Death hit' },
+                    { name: 'Invoke Death',    icon: 'Invoke_Death_icon', note: 'Open with this — gives free Finger of Death hit' },
                     { name: 'Living Death',    icon: 'Living_Death',    note: 'Pop ult immediately after' },
                     { name: 'Touch of Death',  icon: 'Touch_of_Death',  note: 'Builds residual soul stacks' },
                     { name: 'Death Skulls',    icon: 'Death_Skulls',    note: 'Main damage — bounces 4x under Living Death' },

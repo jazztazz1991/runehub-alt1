@@ -3,7 +3,7 @@ export type AbilityCategory = 'basic' | 'enhanced' | 'ultimate' | 'utility';
 
 export interface AbilityDef {
     name: string;
-    wikiFile: string; // RS3 wiki filename without .png (TitleCase_With_Underscores)
+    wikiFile?: string; // RS3 wiki filename without .png (TitleCase_With_Underscores)
 }
 
 export const WIKI_IMG = 'https://runescape.wiki/images/';
@@ -14,7 +14,7 @@ export const ABILITIES: Record<CombatStyle, Record<AbilityCategory, AbilityDef[]
             { name: 'Slice',         wikiFile: 'Slice' },
             { name: 'Kick',          wikiFile: 'Kick' },
             { name: 'Punish',        wikiFile: 'Punish' },
-            { name: 'Fury',          wikiFile: 'Fury_(ability)' },
+            { name: 'Fury',          wikiFile: 'Fury' },
             { name: 'Dismember',     wikiFile: 'Dismember' },
             { name: 'Sever',         wikiFile: 'Sever' },
             { name: 'Cleave',        wikiFile: 'Cleave' },
@@ -73,7 +73,7 @@ export const ABILITIES: Record<CombatStyle, Record<AbilityCategory, AbilityDef[]
             { name: 'Bombardment',            wikiFile: 'Bombardment' },
             { name: 'Shadow Tendrils',        wikiFile: 'Shadow_Tendrils' },
             { name: 'Tight Bindings',         wikiFile: 'Tight_Bindings' },
-            { name: 'Mechanised Chinchompas', wikiFile: 'Mechanised_Chinchompas' },
+            { name: 'Mechanised Chinchompas', wikiFile: 'Mechanised_chinchompa' },
         ],
         ultimate: [
             { name: "Death's Swiftness", wikiFile: "Death's_Swiftness" },
@@ -112,9 +112,9 @@ export const ABILITIES: Record<CombatStyle, Record<AbilityCategory, AbilityDef[]
             { name: 'Omnipower', wikiFile: 'Omnipower' },
         ],
         utility: [
-            { name: 'Vulnerability', wikiFile: 'Vulnerability' },
-            { name: 'Entangle',      wikiFile: 'Entangle' },
-            { name: 'Snare',         wikiFile: 'Snare' },
+            { name: 'Vulnerability', wikiFile: 'Vulnerability_icon' },
+            { name: 'Entangle',      wikiFile: 'Entangle_icon' },
+            { name: 'Snare',         wikiFile: 'Snare_icon' },
             { name: 'Freedom',       wikiFile: 'Freedom' },
             { name: 'Anticipation',  wikiFile: 'Anticipation' },
             { name: 'Surge',         wikiFile: 'Surge' },
@@ -125,36 +125,36 @@ export const ABILITIES: Record<CombatStyle, Record<AbilityCategory, AbilityDef[]
         basic: [
             { name: 'Soul Sap',        wikiFile: 'Soul_Sap' },
             { name: 'Touch of Death',  wikiFile: 'Touch_of_Death' },
-            { name: 'Bone Shield',     wikiFile: 'Bone_Shield' },
+            { name: 'Bone Shield',     wikiFile: 'Bone_Shield_sprite' },
             { name: 'Spectral Scythe', wikiFile: 'Spectral_Scythe' },
         ],
         enhanced: [
             { name: 'Bloat',               wikiFile: 'Bloat' },
-            { name: 'Skeletal Claws',      wikiFile: 'Skeletal_Claws' },
+            { name: 'Skeletal Claws' },
             { name: 'Blood Siphon',        wikiFile: 'Blood_Siphon' },
             { name: 'Volley of Souls',     wikiFile: 'Volley_of_Souls' },
-            { name: 'Spectral Scythe II',  wikiFile: 'Spectral_Scythe_II' },
+            { name: 'Spectral Scythe II',  wikiFile: 'Spectral_Scythe_2' },
             { name: 'Soul Strike',         wikiFile: 'Soul_Strike' },
-            { name: 'Spite',               wikiFile: 'Spite' },
+            { name: 'Spite' },
         ],
         ultimate: [
             { name: 'Death Skulls',    wikiFile: 'Death_Skulls' },
             { name: 'Living Death',    wikiFile: 'Living_Death' },
             { name: 'Finger of Death', wikiFile: 'Finger_of_Death' },
-            { name: 'Invoke Death',    wikiFile: 'Invoke_Death' },
+            { name: 'Invoke Death',    wikiFile: 'Invoke_Death_icon' },
         ],
         utility: [
             { name: 'Conjure Undead Army',      wikiFile: 'Conjure_Undead_Army' },
-            { name: 'Command Undead Army',      wikiFile: 'Command_Undead_Army' },
+            { name: 'Command Undead Army' },
             { name: 'Conjure Skeleton Warrior', wikiFile: 'Conjure_Skeleton_Warrior' },
             { name: 'Command Skeleton Warrior', wikiFile: 'Command_Skeleton_Warrior' },
             { name: 'Conjure Putrid Zombie',    wikiFile: 'Conjure_Putrid_Zombie' },
             { name: 'Command Putrid Zombie',    wikiFile: 'Command_Putrid_Zombie' },
             { name: 'Conjure Vengeful Ghost',   wikiFile: 'Conjure_Vengeful_Ghost' },
             { name: 'Command Vengeful Ghost',   wikiFile: 'Command_Vengeful_Ghost' },
-            { name: 'Life Transfer',            wikiFile: 'Life_Transfer' },
-            { name: 'Darkness',                 wikiFile: 'Darkness_(necromancy)' },
-            { name: 'Soulbound Lantern',        wikiFile: 'Soulbound_Lantern' },
+            { name: 'Life Transfer',            wikiFile: 'Life_Transfer_icon' },
+            { name: 'Darkness',                 wikiFile: 'Darkness_icon' },
+            { name: 'Soulbound Lantern',        wikiFile: 'Soulbound_lantern' },
         ],
     },
 };
