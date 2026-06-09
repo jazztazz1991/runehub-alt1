@@ -22,6 +22,7 @@ async function loadIcon(filename: string): Promise<void> {
     iconCache.set(filename, null);
     try {
         const resp = await fetch(ICON_BASE + filename + '.png');
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
         const blob = await resp.blob();
         const bitmap = await createImageBitmap(blob, { resizeWidth: ICON_SIZE, resizeHeight: ICON_SIZE });
         const canvas = document.createElement('canvas');
@@ -40,7 +41,10 @@ async function loadIcon(filename: string): Promise<void> {
         let bin = '';
         for (let i = 0; i < bgra.length; i++) bin += String.fromCharCode(bgra[i]);
         iconCache.set(filename, btoa(bin));
-    } catch {
+        console.log('[RH] icon loaded:', filename, '— redrawing');
+        drawOverlay();
+    } catch (e) {
+        console.log('[RH] icon FAILED:', filename, String(e));
         iconCache.set(filename, null);
     }
 }
