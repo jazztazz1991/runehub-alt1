@@ -206,7 +206,7 @@ export const ABILITIES: Record<CombatStyle, Record<AbilityCategory, AbilityDef[]
             { name: 'Darkness',                 wikiFile: 'Darkness_icon' },
         ],
         special: [
-            { name: 'Death Guard', wikiFile: 'Death_guard' },
+            { name: 'Death Guard', wikiFile: 'Death_guard_(tier_90)' },
         ],
         greater: [],
     },
