@@ -204,6 +204,11 @@ const checklistContainer= document.getElementById('checklist-container')!;
 const checklistItemsEl  = document.getElementById('checklist-items')!;
 const resetChecklistBtn = document.getElementById('reset-checklist-btn')as HTMLButtonElement;
 const setupEmptyEl      = document.getElementById('setup-empty')!;
+const addItemBtn        = document.getElementById('add-item-btn')        as HTMLButtonElement;
+const addItemForm       = document.getElementById('add-item-form')!;
+const addItemInput      = document.getElementById('add-item-input')      as HTMLInputElement;
+const addItemCat        = document.getElementById('add-item-cat')        as HTMLSelectElement;
+const addItemConfirm    = document.getElementById('add-item-confirm')    as HTMLButtonElement;
 
 // Editor
 const editorListEl      = document.getElementById('editor-list')!;
@@ -288,7 +293,10 @@ let killPB: number | null = null;
 let pendingDrops: string[] = [];
 
 // Checklist state
-let checkedItems = new Set<string>();
+let checkedItems  = new Set<string>();   // item IDs that are checked
+let hiddenItems   = new Set<string>();   // built-in item IDs the user removed
+interface CustomItem { id: string; label: string; category: string; }
+let customItems: CustomItem[] = [];      // user-added items for this boss
 let checklistGuideKey: string | null = null;
 
 // Custom guides
@@ -356,6 +364,7 @@ function unloadGuide(): void {
     renderKillLog();
     setupTabBossEl.classList.add('hidden');
     checklistContainer.classList.add('hidden');
+    addItemForm.classList.add('hidden');
     setupEmptyEl.classList.remove('hidden');
     clearOverlay();
 }
@@ -607,8 +616,10 @@ function renderGuideTab(): void {
 
 // ── Kill tracker ──────────────────────────────────────────────────────────────
 
-const killStatsKey  = (k: string) => `rh-kills-${k}`;
-const checklistKey  = (k: string) => `rh-checklist-${k}`;
+const killStatsKey      = (k: string) => `rh-kills-${k}`;
+const checklistKey      = (k: string) => `rh-checklist-${k}`;
+const checklistHiddenKey= (k: string) => `rh-checklist-hidden-${k}`;
+const checklistCustomKey= (k: string) => `rh-checklist-custom-${k}`;
 
 function loadKillStats(key: string): void {
     try {
@@ -721,50 +732,105 @@ function loadChecklist(key: string): void {
         const raw = localStorage.getItem(checklistKey(key));
         checkedItems = raw ? new Set(JSON.parse(raw)) : new Set();
     } catch { checkedItems = new Set(); }
+    try {
+        const raw = localStorage.getItem(checklistHiddenKey(key));
+        hiddenItems = raw ? new Set(JSON.parse(raw)) : new Set();
+    } catch { hiddenItems = new Set(); }
+    try {
+        const raw = localStorage.getItem(checklistCustomKey(key));
+        customItems = raw ? JSON.parse(raw) : [];
+    } catch { customItems = []; }
 }
 
 function saveChecklist(): void {
     if (!checklistGuideKey) return;
-    localStorage.setItem(checklistKey(checklistGuideKey), JSON.stringify([...checkedItems]));
+    localStorage.setItem(checklistKey(checklistGuideKey),       JSON.stringify([...checkedItems]));
+    localStorage.setItem(checklistHiddenKey(checklistGuideKey), JSON.stringify([...hiddenItems]));
+    localStorage.setItem(checklistCustomKey(checklistGuideKey), JSON.stringify(customItems));
+}
+
+function buildChecklistRow(id: string, label: string, category: string, isCustom: boolean): HTMLElement {
+    const row = document.createElement('div');
+    row.className = 'checklist-item' + (checkedItems.has(id) ? ' checked' : '');
+
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.checked = checkedItems.has(id);
+    cb.addEventListener('change', () => {
+        if (cb.checked) checkedItems.add(id); else checkedItems.delete(id);
+        row.classList.toggle('checked', cb.checked);
+        saveChecklist();
+    });
+
+    const lbl = document.createElement('label');
+    lbl.className = 'ci-label'; lbl.textContent = label;
+    lbl.addEventListener('click', () => cb.click());
+
+    const cat = document.createElement('span');
+    cat.className = `ci-cat cat-${category}`;
+    cat.textContent = category;
+
+    const del = document.createElement('button');
+    del.className = 'ci-delete'; del.title = isCustom ? 'Remove' : 'Hide';
+    del.textContent = '✕';
+    del.addEventListener('click', () => {
+        if (isCustom) {
+            customItems = customItems.filter(c => c.id !== id);
+        } else {
+            hiddenItems.add(id);
+            checkedItems.delete(id);
+        }
+        saveChecklist();
+        renderChecklist();
+    });
+
+    row.append(cb, lbl, cat, del);
+    return row;
 }
 
 function renderChecklist(): void {
     checklistItemsEl.innerHTML = '';
-    if (!currentGuide || currentGuide.setup.length === 0) {
+    const hasBuiltIn = currentGuide && currentGuide.setup.length > 0;
+    if (!hasBuiltIn && customItems.length === 0) {
         checklistContainer.classList.add('hidden');
         setupEmptyEl.classList.remove('hidden');
         return;
     }
     checklistContainer.classList.remove('hidden');
     setupEmptyEl.classList.add('hidden');
+    addItemForm.classList.add('hidden');
 
-    for (const item of currentGuide.setup) {
-        const row = document.createElement('div');
-        row.className = 'checklist-item' + (checkedItems.has(item.id) ? ' checked' : '');
-
-        const cb = document.createElement('input');
-        cb.type = 'checkbox'; cb.checked = checkedItems.has(item.id);
-        cb.addEventListener('change', () => {
-            if (cb.checked) checkedItems.add(item.id); else checkedItems.delete(item.id);
-            row.classList.toggle('checked', cb.checked);
-            saveChecklist();
-        });
-
-        const lbl = document.createElement('label');
-        lbl.className = 'ci-label'; lbl.textContent = item.label;
-        lbl.addEventListener('click', () => cb.click());
-
-        const cat = document.createElement('span');
-        cat.className = `ci-cat cat-${item.category}`;
-        cat.textContent = item.category;
-
-        row.append(cb, lbl, cat);
-        checklistItemsEl.appendChild(row);
+    if (currentGuide) {
+        for (const item of currentGuide.setup) {
+            if (hiddenItems.has(item.id)) continue;
+            checklistItemsEl.appendChild(buildChecklistRow(item.id, item.label, item.category, false));
+        }
+    }
+    for (const ci of customItems) {
+        checklistItemsEl.appendChild(buildChecklistRow(ci.id, ci.label, ci.category, true));
     }
 }
 
+addItemBtn.addEventListener('click', () => {
+    addItemForm.classList.toggle('hidden');
+    if (!addItemForm.classList.contains('hidden')) addItemInput.focus();
+});
+
+function confirmAddItem(): void {
+    const label = addItemInput.value.trim();
+    if (!label) { addItemInput.focus(); return; }
+    customItems.push({ id: 'ci-' + Date.now().toString(36), label, category: addItemCat.value });
+    saveChecklist();
+    addItemInput.value = '';
+    addItemForm.classList.add('hidden');
+    renderChecklist();
+}
+addItemConfirm.addEventListener('click', confirmAddItem);
+addItemInput.addEventListener('keydown', e => { if (e.key === 'Enter') confirmAddItem(); });
+
 resetChecklistBtn.addEventListener('click', () => {
     checkedItems.clear();
+    hiddenItems.clear();
+    customItems = [];
     saveChecklist();
     renderChecklist();
 });

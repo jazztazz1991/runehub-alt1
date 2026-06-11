@@ -106,7 +106,22 @@
     <div id="setup-tab-boss-name" class="setup-tab-boss-name hidden"></div>
     <div id="checklist-container" class="hidden">
         <div id="checklist-items"></div>
-        <button id="reset-checklist-btn" class="outline-btn">Reset Checklist</button>
+        <!-- Add item inline form -->
+        <div id="add-item-form" class="add-item-form hidden">
+            <input id="add-item-input" type="text" placeholder="Item label..." maxlength="60" />
+            <select id="add-item-cat">
+                <option value="other">Other</option>
+                <option value="potion">Potion</option>
+                <option value="gear">Gear</option>
+                <option value="prayer">Prayer</option>
+                <option value="familiar">Familiar</option>
+            </select>
+            <button id="add-item-confirm">Add</button>
+        </div>
+        <div class="checklist-footer">
+            <button id="add-item-btn" class="inline-btn">+ Add item</button>
+            <button id="reset-checklist-btn" class="outline-btn">Reset</button>
+        </div>
     </div>
     <div id="setup-empty" class="tab-empty">
         Select a boss to see its pre-fight checklist.
