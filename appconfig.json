@@ -1,6 +1,6 @@
 {
-    "appName": "RuneHub Rotation Helper",
-    "description": "Boss rotation helper — shows your ability rotation for the current boss.",
+    "appName": "RuneHub Bossing Helper",
+    "description": "Full bossing assistant — rotation, mechanics guide, kill tracker, and pre-fight checklist.",
     "appUrl": "./index.html",
     "configUrl": "./appconfig.json",
     "iconUrl": "./icon.png",

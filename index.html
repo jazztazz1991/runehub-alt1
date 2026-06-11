@@ -2,89 +2,196 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>RuneHub Rotation Helper</title>
+    <title>RuneHub Bossing Helper</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="manifest" href="appconfig.json" id="alt1-appconfig" />
 </head>
 <body>
-    <!-- Main panel -->
-    <div id="panel">
-        <div id="top-row">
-            <span id="step-counter"></span>
-            <div id="top-controls">
-                <button id="start-btn" title="Start / Pause">▶</button>
-                <button id="reset-btn" title="Reset to step 1">⟳</button>
-            </div>
+
+<!-- ── FIGHT TAB ──────────────────────────────────────────── -->
+<div id="tab-fight" class="tab-content active">
+    <select id="boss-select"><option value="">-- Auto-detect / Select boss --</option></select>
+    <div id="setup-note" class="setup-note"></div>
+
+    <!-- Phase navigation: sequential mode -->
+    <div id="phase-nav" class="phase-nav hidden">
+        <button id="phase-prev" class="phase-arrow">&#9664;</button>
+        <div class="phase-nav-center">
+            <span id="phase-label" class="phase-label-text"></span>
+            <span id="phase-counter" class="phase-counter"></span>
         </div>
-        <select id="boss-select"><option value="">Auto-detect boss</option></select>
-        <div id="setup-note"></div>
-        <button id="setpos-btn" title="Move overlay to mouse position, then press Alt+1">⊕ Set Overlay Position</button>
-        <button id="edit-rotations-btn">✎ Edit rotations</button>
+        <button id="phase-next" class="phase-arrow">&#9654;</button>
     </div>
 
-    <!-- Editor: rotation list -->
-    <div id="editor-list" class="ed-page" style="display:none">
-        <div class="ed-header">
-            <button class="ed-back" id="list-back-btn">◀</button>
-            <span class="ed-title">My Rotations</span>
-            <button class="ed-add-btn" id="new-rotation-btn" title="New rotation">＋</button>
-        </div>
-        <div id="custom-list-items"></div>
-        <p id="custom-list-empty" class="ed-empty">No rotations yet.<br/>Press ＋ to create one.</p>
-    </div>
+    <!-- Phase note: per-phase tip text -->
+    <div id="phase-note" class="phase-note hidden"></div>
 
-    <!-- Editor: rotation detail -->
-    <div id="editor-detail" class="ed-page" style="display:none">
-        <div class="ed-header">
-            <button class="ed-back" id="detail-back-btn">◀</button>
-            <span class="ed-title" id="detail-title">New Rotation</span>
-        </div>
-        <div class="ed-form">
-            <div class="ed-field">
-                <label>Name</label>
-                <input id="ed-name" type="text" placeholder="e.g. Zamorak P1" maxlength="30" />
-            </div>
-            <div class="ed-field">
-                <label>Auto-detect <span class="ed-hint">(OCR target, lowercase)</span></label>
-                <input id="ed-boss-target" type="text" placeholder="e.g. lord of chaos" />
-            </div>
-            <div class="ed-field">
-                <label>Style</label>
-                <select id="ed-style">
-                    <option value="melee">Melee</option>
-                    <option value="ranged">Ranged</option>
-                    <option value="magic">Magic</option>
-                    <option value="necromancy" selected>Necromancy</option>
-                </select>
-            </div>
-            <div class="ed-field">
-                <label>Setup note <span class="ed-hint">(optional)</span></label>
-                <input id="ed-setup-note" type="text" placeholder="Gear / prayer reminder" maxlength="80" />
-            </div>
-        </div>
-        <div class="ed-section-label">Abilities</div>
-        <div id="ed-ability-list"></div>
-        <button id="ed-add-ability">＋ Add ability</button>
-        <div class="ed-footer">
-            <button id="ed-delete-btn" class="ed-danger" style="display:none">Delete</button>
-            <button id="ed-save-btn" class="ed-save">Save</button>
+    <!-- Choice picker: choice / role mode -->
+    <div id="choice-picker" class="hidden"></div>
+
+    <!-- Restriction chips -->
+    <div id="restriction-chips" class="restriction-chips hidden"></div>
+
+    <!-- Rotation list -->
+    <div id="rotation-list" class="rotation-list"></div>
+
+    <!-- Step counter + controls -->
+    <div id="rotation-row" class="rotation-row">
+        <span id="step-counter" class="step-counter"></span>
+        <div class="rotation-btns">
+            <button id="start-btn">&#9654;</button>
+            <button id="reset-btn" title="Reset to step 1">&#10227;</button>
         </div>
     </div>
 
-    <!-- Ability picker -->
-    <div id="ability-picker" class="ed-page" style="display:none">
-        <div class="ed-header">
-            <button class="ed-back" id="picker-back-btn">◀</button>
-            <span class="ed-title">Choose Ability</span>
+    <button id="setpos-btn" class="util-btn">&#8853; Set Overlay Position</button>
+    <button id="edit-rotations-btn" class="util-btn">&#9998; My Rotations</button>
+</div>
+
+<!-- ── GUIDE TAB ──────────────────────────────────────────── -->
+<div id="tab-guide" class="tab-content hidden">
+    <div id="guide-boss-header" class="guide-boss-header hidden">
+        <span id="guide-boss-name" class="guide-boss-name-lbl"></span>
+    </div>
+    <div id="mechanic-cards"></div>
+    <div id="guide-empty" class="tab-empty">
+        Select a boss to see its mechanic guide.<br>
+        Built-in bosses include phase-by-phase tips and critical mechanic alerts.
+    </div>
+</div>
+
+<!-- ── LOOT TAB ──────────────────────────────────────────── -->
+<div id="tab-loot" class="tab-content hidden">
+    <div id="loot-boss-lbl" class="loot-boss-lbl"></div>
+
+    <div class="loot-stats-row">
+        <div class="stat-block">
+            <span id="stat-kills"     class="stat-val">0</span>
+            <span class="stat-lbl">Kills</span>
         </div>
-        <div id="picker-tabs"></div>
-        <div id="picker-grid"></div>
-        <div class="picker-manual">
-            <input id="picker-manual-input" type="text" placeholder="Not listed? Type name…" maxlength="40" />
-            <button id="picker-manual-add">Add</button>
+        <div class="stat-block">
+            <span id="stat-timer"     class="stat-val">0:00</span>
+            <span id="stat-timer-lbl" class="stat-lbl">Current</span>
+        </div>
+        <div class="stat-block">
+            <span id="stat-pb"        class="stat-val">--</span>
+            <span class="stat-lbl">PB</span>
+        </div>
+        <div class="stat-block">
+            <span id="stat-avg"       class="stat-val">--</span>
+            <span class="stat-lbl">Avg</span>
         </div>
     </div>
 
-    <script src="dist/index.js"></script>
+    <div class="loot-btns-row">
+        <button id="kill-start-btn" class="loot-btn primary-loot-btn">Start Kill</button>
+        <button id="kill-end-btn"   class="loot-btn" disabled>End Kill</button>
+    </div>
+
+    <div class="drop-log-header">
+        <span class="section-label">Drop Log</span>
+        <button id="log-drop-btn" class="inline-btn">+ Log Drop</button>
+    </div>
+    <div id="drop-input-row" class="drop-input-row hidden">
+        <input id="drop-input" type="text" placeholder="Drop name..." maxlength="40" />
+        <button id="drop-confirm-btn">Add</button>
+    </div>
+
+    <div id="kill-log-list" class="kill-log-list"></div>
+    <button id="clear-loot-btn" class="danger-small-btn">Clear All</button>
+</div>
+
+<!-- ── SETUP TAB ──────────────────────────────────────────── -->
+<div id="tab-setup" class="tab-content hidden">
+    <div id="setup-tab-boss-name" class="setup-tab-boss-name hidden"></div>
+    <div id="checklist-container" class="hidden">
+        <div id="checklist-items"></div>
+        <button id="reset-checklist-btn" class="outline-btn">Reset Checklist</button>
+    </div>
+    <div id="setup-empty" class="tab-empty">
+        Select a boss to see its pre-fight checklist.
+    </div>
+</div>
+
+<!-- ── EDITOR: rotation list ─────────────────────────────── -->
+<div id="editor-list" class="ed-page" style="display:none">
+    <div class="ed-header">
+        <button class="ed-back" id="list-back-btn">&#9664;</button>
+        <span class="ed-title">My Rotations</span>
+        <button class="ed-add-btn" id="new-rotation-btn" title="New rotation">&#65291;</button>
+    </div>
+    <div id="custom-list-items"></div>
+    <p id="custom-list-empty" class="ed-empty">No rotations yet.<br>Press &#65291; to create one.</p>
+</div>
+
+<!-- ── EDITOR: rotation detail ───────────────────────────── -->
+<div id="editor-detail" class="ed-page" style="display:none">
+    <div class="ed-header">
+        <button class="ed-back" id="detail-back-btn">&#9664;</button>
+        <span class="ed-title" id="detail-title">New Rotation</span>
+    </div>
+    <div class="ed-form">
+        <div class="ed-field">
+            <label>Name</label>
+            <input id="ed-name" type="text" placeholder="e.g. My Telos Rotation" maxlength="30" />
+        </div>
+        <div class="ed-field">
+            <label>Auto-detect <span class="ed-hint">(lowercase target name)</span></label>
+            <input id="ed-boss-target" type="text" placeholder="e.g. telos" />
+        </div>
+        <div class="ed-field">
+            <label>Style</label>
+            <select id="ed-style">
+                <option value="melee">Melee</option>
+                <option value="ranged">Ranged</option>
+                <option value="magic">Magic</option>
+                <option value="necromancy" selected>Necromancy</option>
+            </select>
+        </div>
+        <div class="ed-field">
+            <label>Setup note <span class="ed-hint">(optional)</span></label>
+            <input id="ed-setup-note" type="text" placeholder="Gear / prayer reminder" maxlength="80" />
+        </div>
+    </div>
+    <!-- Phase tabs -->
+    <div class="ed-phases-row">
+        <span class="ed-section-label">Phases</span>
+        <div id="ed-phase-tabs" class="ed-phase-tabs"></div>
+        <button id="ed-add-phase-btn" class="ed-add-btn" title="Add phase">&#65291;</button>
+    </div>
+    <div class="ed-section-label" style="margin-top:4px">
+        Abilities <span id="ed-phase-name-hint" class="ed-hint"></span>
+    </div>
+    <div id="ed-ability-list"></div>
+    <button id="ed-add-ability" class="ed-add-ability-btn">&#65291; Add ability</button>
+    <div class="ed-footer">
+        <button id="ed-delete-btn" class="ed-danger" style="display:none">Delete</button>
+        <button id="ed-save-btn"   class="ed-save">Save</button>
+    </div>
+</div>
+
+<!-- ── EDITOR: ability picker ────────────────────────────── -->
+<div id="ability-picker" class="ed-page" style="display:none">
+    <div class="ed-header">
+        <button class="ed-back" id="picker-back-btn">&#9664;</button>
+        <span class="ed-title">Choose Ability</span>
+    </div>
+    <div id="picker-tabs"></div>
+    <div id="picker-grid"></div>
+    <div class="picker-manual">
+        <input id="picker-manual-input" type="text" placeholder="Not listed? Type name&#8230;" maxlength="40" />
+        <button id="picker-manual-add">Add</button>
+    </div>
+</div>
+
+<!-- ── TAB BAR ────────────────────────────────────────────── -->
+<nav id="tab-bar">
+    <button class="tab-btn active" data-tab="fight">Fight</button>
+    <button class="tab-btn"        data-tab="guide">Guide</button>
+    <button class="tab-btn"        data-tab="loot" >Loot</button>
+    <button class="tab-btn"        data-tab="setup">Setup</button>
+</nav>
+
+<script src="dist/index.js"></script>
 </body>
 </html>
